@@ -1,19 +1,20 @@
 <template>
-  <div class="home-screen">
+  <div class="home-screen" @click="navigateToNextPage">
     <div class="overlay"></div> <!-- Overlay for background -->
     <div class="content">
       <p class="small-text">Fast & Easy</p>
       <h1 class="large-text">
         <span class="bordered-text">Order<br />& pay<br />here</span>
       </h1>
-      <div class="down-arrow">
-        <!-- Arrow Cursor Icon -->
+      <div class="touch-icon">
+        <!-- Touchscreen Gesture Icon -->
         <svg width="48" height="48" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 2L10.59 3.41 17.17 10H3v2h14.17l-6.58 6.59L12 22l10-10z"/>
+          <circle cx="12" cy="12" r="10" stroke="white" stroke-width="2" fill="none" />
+          <path d="M12 8V12M12 12h-2M12 12h2M12 8h-2M10 8c0 1.11-.89 2-2 2s-2-.89-2-2 .89-2 2-2 2 .89 2 2z" fill="white" />
         </svg>
       </div>
     </div>
-    <button class="start-button" @click="navigateToNextPage">
+    <button class="start-button" @click.stop="navigateToNextPage">
       <div class="icon">
         <!-- Coffee Order Icon -->
         <svg width="48" height="48" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
@@ -30,8 +31,8 @@ export default {
   name: 'HomeScreen',
   methods: {
     navigateToNextPage() {
-      // Change the path to the desired next page
-      this.$router.push({ path: '/next-page' });
+      // Use Vue Router to navigate to the SecondPage component
+      this.$router.push({ name: 'SecondPage' });
     },
   },
 };
@@ -41,10 +42,10 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
 
 .home-screen {
-  position: relative; /* Make parent position relative for overlay */
+  position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Center content vertically */
+  justify-content: center;
   align-items: center;
   height: 100vh;
   background-image: url('c:/Users/ADMIN/Downloads/International Coffee Day Facebook Cover.png');
@@ -52,32 +53,33 @@ export default {
   background-position: center;
   color: white;
   text-align: center;
-  padding: 20px; /* Add padding to prevent content from touching edges */
+  padding: 20px;
+  cursor: pointer; /* Indicates screen is clickable */
 }
 
 .overlay {
-  position: absolute; /* Position overlay absolute */
+  position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
-  z-index: 1; /* Ensure it stays behind the text */
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1;
 }
 
 .content {
   flex-grow: 1;
-  z-index: 2; /* Ensure content stays above overlay */
+  z-index: 2;
 }
 
 .small-text {
-  font-size: 2em; /* Use responsive font size */
+  font-size: 2em;
   margin-bottom: 10px;
 }
 
 .large-text {
   font-family: 'Playfair Display', serif;
-  font-size: 5em; /* Default size */
+  font-size: 5em;
   font-weight: bold;
   line-height: 1.2;
 }
@@ -88,28 +90,45 @@ export default {
   display: inline-block;
 }
 
-.down-arrow {
-  font-size: 3em; /* Use responsive size */
+.touch-icon {
+  font-size: 1em;
   margin-top: 10px;
+  display:block;
+  align-items: center;
+  justify-content: center;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
 }
 
 .start-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(79, 53, 38, 0.8); /* Dark coffee brown */
+  background-color: rgba(79, 53, 38, 0.8);
   width: 100%;
   padding: 20px;
-  font-size: 1.5em; /* Default size */
+  font-size: 2em;
   font-weight: bold;
   color: white;
-  border: none; /* Remove default button border */
-  cursor: pointer; /* Change cursor to pointer */
-  z-index: 2; /* Ensure it stays above overlay */
+  border: none;
+  cursor: pointer;
+  z-index: 2;
+  animation: buttonPulse 1.5s infinite; /* Apply pulsing animation */
+}
+
+@keyframes buttonPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
 .start-button:hover {
-  background-color: rgba(79, 53, 38, 1); /* Darker coffee brown on hover */
+  background-color: rgba(79, 53, 38, 1);
 }
 
 
@@ -120,45 +139,21 @@ export default {
 }
 
 .icon svg {
-  margin-right: 10px; /* Add space between icons */
+  margin-right: 10px;
 }
 
-/* Media Queries for responsiveness */
+/* Media Queries */
 @media (max-width: 768px) {
-  .small-text {
-    font-size: 1.5em; /* Adjust for tablets */
-  }
-  
-  .large-text {
-    font-size: 4em; /* Adjust for tablets */
-  }
-
-  .down-arrow {
-    font-size: 2.5em; /* Adjust for tablets */
-  }
-
-  .start-button {
-    padding: 15px; /* Adjust padding */
-    font-size: 1.2em; /* Adjust size */
-  }
+  .small-text { font-size: 1.5em; }
+  .large-text { font-size: 4em; }
+  .touch-icon { font-size: 2.5em; }
+  .start-button { padding: 15px; font-size: 1.2em; }
 }
 
 @media (max-width: 480px) {
-  .small-text {
-    font-size: 1.2em; /* Further adjust for mobile */
-  }
-
-  .large-text {
-    font-size: 3.5em; /* Further adjust for mobile */
-  }
-
-  .down-arrow {
-    font-size: 2em; /* Further adjust for mobile */
-  }
-
-  .start-button {
-    padding: 10px; /* Adjust padding */
-    font-size: 1em; /* Adjust size */
-  }
+  .small-text { font-size: 1.2em; }
+  .large-text { font-size: 3.5em; }
+  .touch-icon { font-size: 2em; }
+  .start-button { padding: 10px; font-size: 1em; }
 }
 </style>

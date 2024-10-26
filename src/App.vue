@@ -1,20 +1,15 @@
 <template>
   <v-app>
-    <KioskHome /> <!-- Include the KioskHome component -->
+    <router-view /> <!-- This will render the current route's component -->
   </v-app>
 </template>
 
 <script>
-import KioskHome from './components/KioskHome.vue'; // Import the KioskHome component
-
 export default {
   name: 'App',
-  components: {
-    KioskHome, // Register the KioskHome component
-  },
 };
 </script>
 
 <style>
-@import '~vuetify/dist/vuetify.min.css'; /* Ensure Vuetify styles are included */
+@import '~vuetify/dist/vuetify.min.css';
 </style>

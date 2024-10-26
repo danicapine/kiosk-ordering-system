@@ -97,7 +97,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(111, 78, 55, 0.8);
+  background-color: rgba(79, 53, 38, 0.8); /* Dark coffee brown */
   width: 100%;
   padding: 20px;
   font-size: 1.5em; /* Default size */
@@ -109,8 +109,9 @@ export default {
 }
 
 .start-button:hover {
-  background-color: rgba(111, 78, 55, 1); /* Darker on hover */
+  background-color: rgba(79, 53, 38, 1); /* Darker coffee brown on hover */
 }
+
 
 .icon {
   margin-right: 10px;

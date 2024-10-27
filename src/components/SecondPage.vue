@@ -29,7 +29,8 @@ export default {
   methods: {
     selectOption(option) {
       console.log(`You selected: ${option}`);
-      // Add further logic, like navigating to another page or showing a message
+      // Navigate to MainMenu with the selected option
+      this.$router.push({ name: 'MainMenu', query: { option } });
     },
   },
 };
@@ -59,7 +60,7 @@ export default {
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1;
+  z-index: 1; /* Keep overlay behind content */
 }
 
 .header-icon {
@@ -69,34 +70,38 @@ export default {
   justify-content: center;
   align-items: center;
   width: 100%;
-  z-index: 2;
+  z-index: 3; /* Ensure logo is above the overlay */
 }
 
 .header-icon img {
-  width: 150px;
-  height: 150px;
+  width: 10vw; /* Responsive width for logo */
+  height: auto; /* Maintain aspect ratio */
   animation: pulse 1.5s infinite;
 }
 
 .content {
-  z-index: 2;
+  z-index: 2; /* Keep content above overlay */
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: auto; /* Pushes content towards the bottom */
-  padding-bottom: 25px; /* Adds extra space at the bottom */
+  justify-content: center; /* Center the content vertically */
+  flex-grow: 1; /* Allow the content to grow and occupy space */
+  padding: 20px; /* Add padding for better spacing */
+  margin-top: 70px; /* Space from the top to avoid overlapping the logo */
 }
 
 .title {
   font-family: 'Playfair Display', serif;
-  font-size: 5em; /* Increased title font size */
+  font-size: 6vw; /* Responsive font size */
   font-weight: bold;
-  margin-bottom: 40px;
+  margin-bottom: 10px;
 }
 
 .options {
   display: flex;
-  gap: 40px;
+  justify-content: center; /* Center buttons horizontally */
+  align-items: flex-end; /* Align items at the bottom */
+  gap: 5vw; /* Maintain gap between buttons */
 }
 
 .image-button {
@@ -108,26 +113,32 @@ export default {
   padding: 0;
   cursor: pointer;
   transition: transform 0.2s;
-}
-
-.image-button:hover .button-image {
-  transform: scale(1.1);
+  position: relative; /* Ensure text is correctly positioned inside the button */
 }
 
 .button-image {
-  width: 220px;
-  height: auto;
+  width: 23vw; /* Responsive width for button image */
+  height: auto; /* Maintain aspect ratio */
   border-radius: 8px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
   transition: transform 0.2s;
 }
 
 .button-text {
-  margin-top: 10px;
-  font-size: 2.5em; /* Increased button text size */
+  margin-top: 10px; /* Space between image and text */
+  font-size: 2.5vw; /* Responsive font size */
   font-weight: bold;
   color: white;
   text-align: center;
+  position: relative; /* Changed to relative */
+  padding: 0 5px; /* Optional padding to ensure it's readable */
+  background-color: transparent; /* Removed background color */
+  bottom: -5px; /* Adjust this value to position below the image */
+}
+
+/* Hover effect */
+.image-button:hover .button-image {
+  transform: scale(1.05); /* Slight scale effect on hover */
 }
 
 /* Animations */
@@ -137,54 +148,22 @@ export default {
   100% { transform: scale(1); }
 }
 
-/* Tablet screens */
+/* Media queries for responsiveness */
 @media (max-width: 1024px) {
-  .header-icon img {
-    width: 120px;
-    height: 120px;
-  }
   .title {
-    font-size: 3em;
-  }
-  .button-image {
-    width: 180px;
-  }
-  .button-text {
-    font-size: 1.3em;
+    font-size: 5vw; /* Adjusted for tablet */
   }
 }
 
-/* Mobile screens */
 @media (max-width: 768px) {
-  .header-icon img {
-    width: 100px;
-    height: 100px;
-  }
   .title {
-    font-size: 2.5em;
-  }
-  .button-image {
-    width: 150px;
-  }
-  .button-text {
-    font-size: 1.1em;
+    font-size: 4vw; /* Adjusted for mobile */
   }
 }
 
-/* Small mobile screens */
 @media (max-width: 480px) {
-  .header-icon img {
-    width: 80px;
-    height: 80px;
-  }
   .title {
-    font-size: 2em;
-  }
-  .button-image {
-    width: 120px;
-  }
-  .button-text {
-    font-size: 1em;
+    font-size: 3.5vw; /* Adjusted for small mobile */
   }
 }
 </style>

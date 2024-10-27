@@ -1,167 +1,96 @@
 <template>
-    <div class="main-menu">
-      <div class="overlay"></div>
-      <div class="content">
-        <h1 class="title">Welcome to the Kiosk Ordering System</h1>
-  
-        <div class="menu-container">
-          <!-- Category Filter -->
-          <div class="category-filter">
-            <h2>Categories</h2>
-            <select v-model="selectedCategory" @change="filterFoods" id="category">
-              <option value="all">All</option>
-              <option v-for="category in categories" :key="category" :value="category">{{ category }}</option>
-            </select>
-          </div>
-  
-          <!-- Search Filter -->
-          <div class="search-filter">
-            <label for="search">Search Foods:</label>
-            <input type="text" v-model="searchQuery" @input="filterFoods" id="search" placeholder="Type to search..." />
-          </div>
-  
-          <!-- Food Items List -->
-          <div class="food-items">
-            <div v-for="food in filteredFoods" :key="food.id" class="food-item">
-              <img :src="food.image" :alt="food.name" class="food-image" />
-              <span class="food-name">{{ food.name }}</span>
-            </div>
-          </div>
-        </div>
+  <div class="menu-container">
+    <h1>Main Menu</h1>
+    <div class="menu-grid">
+      <div class="menu-item" v-for="item in menuItems" :key="item.name" @click="addItemToOrder(item)">
+        <img :src="item.image" :alt="item.name" />
+        <h3>{{ item.name }}</h3>
+        <p>{{ item.calories }} Cal</p>
+        <p>${{ item.price.toFixed(2) }}</p>
       </div>
     </div>
-  </template>
-  
-  <script>
-  export default {
-    name: 'MainMenu',
-    data() {
-      return {
-        selectedCategory: 'all',
-        searchQuery: '',
-        categories: ['Burgers', 'Pizzas', 'Salads', 'Desserts'], // Add more categories as needed
-        foods: [
-          { id: 1, name: 'Cheeseburger', category: 'Burgers', image: require('@/assets/cheeseburger.jpg') },
-          { id: 2, name: 'Pepperoni Pizza', category: 'Pizzas', image: require('@/assets/pepperoni-pizza.jpg') },
-          { id: 3, name: 'Caesar Salad', category: 'Salads', image: require('@/assets/caesar-salad.jpg') },
-          { id: 4, name: 'Chocolate Cake', category: 'Desserts', image: require('@/assets/chocolate-cake.jpg') },
-          // Add more food items as needed
-        ],
-        filteredFoods: [],
-      };
+    <div class="order-summary">
+      <p>My Order - {{ orderType }} | Tax: ${{ tax.toFixed(2) }} | Total: ${{ total.toFixed(2) }} | Items: {{ itemCount }}</p>
+      <button @click="cancelOrder">Cancel Order</button>
+      <button :disabled="itemCount === 0">Done</button>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      menuItems: [
+        { name: "Coca-Cola", calories: 120, price: 1.0, image: "c:\\Users\\kayea\\Downloads\\462548707_578287071443923_3140033151104978666_n.jpg" },
+        { name: "Vanilla Shake", calories: 360, price: 1.5, image: "c:\\Users\\kayea\\Downloads\\462538028_536345125765442_6366026137616671576_n.jpg" },
+        { name: "Hot Chocolate", calories: 200, price: 1.2, image: "c:\\Users\\kayea\\Downloads\\462548643_556714456761680_2644308230400882128_n.jpg" },
+        { name: "Bacon & Biscuit", calories: 400, price: 2.5, image: "c:\\Users\\kayea\\Downloads\\462572943_578143518219429_3718052836942044023_n.jpg" },
+      ],
+      orderType: "Eat-in",
+      taxRate: 0.1, // 10% tax rate
+      itemsInOrder: [],
+    };
+  },
+  computed: {
+    itemCount() {
+      return this.itemsInOrder.length;
     },
-    created() {
-      this.filteredFoods = this.foods; // Initialize with all foods
+    total() {
+      const subtotal = this.itemsInOrder.reduce((sum, item) => sum + item.price, 0);
+      return subtotal + this.tax;
     },
-    methods: {
-      filterFoods() {
-        this.filteredFoods = this.foods.filter(food => {
-          const matchesCategory = this.selectedCategory === 'all' || food.category === this.selectedCategory;
-          const matchesSearch = food.name.toLowerCase().includes(this.searchQuery.toLowerCase());
-          return matchesCategory && matchesSearch;
-        });
-      },
+    tax() {
+      const subtotal = this.itemsInOrder.reduce((sum, item) => sum + item.price, 0);
+      return subtotal * this.taxRate;
     },
-  };
-  </script>
-  
-  <style scoped>
-  .main-menu {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 100vh;
-    background-image: url('c:/Users/ADMIN/Downloads/1.png'); /* Change to your preferred background */
-    background-size: cover;
-    background-position: center;
-    color: white;
-    text-align: center;
-    padding: 20px;
-  }
-  
-  .overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1; /* Keep overlay behind content */
-  }
-  
-  .content {
-    z-index: 2; /* Keep content above overlay */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex-grow: 1; /* Allow the content to grow and occupy space */
-    padding: 20px; /* Add padding for better spacing */
-  }
-  
-  .menu-container {
-    display: flex;
-    width: 100%;
-    max-width: 1200px; /* Limit width for better layout */
-  }
-  
-  .category-filter {
-    flex: 1;
-    margin-right: 20px; /* Space between category filter and food items */
-  }
-  
-  .search-filter {
-    margin: 20px 0; /* Space around the search filter */
-  }
-  
-  .title {
-    font-family: 'Playfair Display', serif;
-    font-size: 6vw; /* Responsive font size */
-    font-weight: bold;
-    margin-bottom: 20px;
-  }
-  
-  .food-items {
-    flex: 3;
-    display: flex;
-    flex-wrap: wrap; /* Allow food items to wrap */
-    justify-content: center; /* Center the items */
-    gap: 20px; /* Space between food items */
-  }
-  
-  .food-item {
-    text-align: center;
-  }
-  
-  .food-image {
-    width: 150px; /* Set a fixed size for images */
-    height: auto; /* Maintain aspect ratio */
-    border-radius: 8px;
-  }
-  
-  .food-name {
-    margin-top: 10px; /* Space between image and text */
-    font-size: 1.2vw; /* Responsive font size */
-  }
-  
-  /* Media queries for responsiveness */
-  @media (max-width: 768px) {
-    .title {
-      font-size: 4vw; /* Adjusted for mobile */
-    }
-    .food-name {
-      font-size: 3.5vw; /* Adjusted for mobile */
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .title {
-      font-size: 3.5vw; /* Adjusted for smaller screens */
-    }
-    .food-name {
-      font-size: 3vw; /* Adjusted for smaller screens */
-    }
-  }
-  </style>
-  
+  },
+  methods: {
+    addItemToOrder(item) {
+      this.itemsInOrder.push(item);
+    },
+    cancelOrder() {
+      this.itemsInOrder = [];
+    },
+  },
+};
+</script>
+
+<style scoped>
+.menu-container {
+  text-align: center;
+}
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-top: 20px;
+}
+.menu-item {
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.menu-item:hover {
+  transform: scale(1.05);
+}
+.menu-item img {
+  width: 100px;
+  height: auto;
+}
+.order-summary {
+  margin-top: 20px;
+}
+button {
+  margin: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+</style>

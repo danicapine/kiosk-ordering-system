@@ -45,7 +45,7 @@ export default {
   flex-direction: column;
   align-items: center;
   height: 100vh;
-  background-image: url('@/assets/nextbg.png');
+  background-image: url('@/assets/kioskhomebg.png');
   background-size: cover;
   background-position: center;
   color: white;

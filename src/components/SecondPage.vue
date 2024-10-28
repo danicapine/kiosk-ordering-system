@@ -45,7 +45,7 @@ export default {
   flex-direction: column;
   align-items: center;
   height: 100vh;
-  background-image: url('c:\Users\kayea\Downloads\462544617_835324245347209_4118324712242713421_n.png');
+  background-image: url('@/assets/nextbg.png');
   background-size: cover;
   background-position: center;
   color: white;

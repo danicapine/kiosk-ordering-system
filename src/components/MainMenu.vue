@@ -1,167 +1,342 @@
 <template>
-    <div class="main-menu">
-      <div class="overlay"></div>
-      <div class="content">
-        <h1 class="title">Welcome to the Kiosk Ordering System</h1>
-  
-        <div class="menu-container">
-          <!-- Category Filter -->
-          <div class="category-filter">
-            <h2>Categories</h2>
-            <select v-model="selectedCategory" @change="filterFoods" id="category">
-              <option value="all">All</option>
-              <option v-for="category in categories" :key="category" :value="category">{{ category }}</option>
-            </select>
-          </div>
-  
-          <!-- Search Filter -->
-          <div class="search-filter">
-            <label for="search">Search Foods:</label>
-            <input type="text" v-model="searchQuery" @input="filterFoods" id="search" placeholder="Type to search..." />
-          </div>
-  
-          <!-- Food Items List -->
-          <div class="food-items">
-            <div v-for="food in filteredFoods" :key="food.id" class="food-item">
-              <img :src="food.image" :alt="food.name" class="food-image" />
-              <span class="food-name">{{ food.name }}</span>
+  <div class="main-menu">
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+      <!-- Logo -->
+      <div class="logo-container">
+        <img src="@/assets/apple-touch-icon.png" alt="Logo" class="logo-image" />
+      </div>
+
+      <!-- Category Icons -->
+      <div
+        v-for="category in categories"
+        :key="category.name"
+        @click="filterByCategory(category.name)"
+        :class="{ active: selectedCategory === category.name }"
+        class="sidebar-item"
+      >
+        <img :src="category.image" :alt="category.name" class="sidebar-image" />
+      </div>
+    </div>
+
+    <!-- Main Menu Content -->
+    <div class="menu-content">
+      <!-- Search Bar -->
+      <div class="search-bar">
+        <input
+          type="text"
+          v-model="searchQuery"
+          placeholder="Search for items..."
+          class="search-input"
+          @input="filterFoods"
+        />
+      </div>
+
+      <!-- Food Items Grid -->
+      <div class="food-items">
+        <div 
+          v-for="food in filteredFoods" 
+          :key="food.id" 
+          class="food-item"
+          @click="openFoodModal(food)"
+        >
+          <img :src="food.image" :alt="food.name" class="food-image" />
+          <div class="food-details">
+            <span class="food-name">{{ food.name }}</span>
+            <div class="food-price-container">
+              <span class="food-price">₱ {{ food.price.toFixed(2) }}</span>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </template>
-  
-  <script>
-  export default {
-    name: 'MainMenu',
-    data() {
-      return {
-        selectedCategory: 'all',
-        searchQuery: '',
-        categories: ['Burgers', 'Pizzas', 'Salads', 'Desserts'], // Add more categories as needed
-        foods: [
-          { id: 1, name: 'Cheeseburger', category: 'Burgers', image: require('@/assets/cheeseburger.jpg') },
-          { id: 2, name: 'Pepperoni Pizza', category: 'Pizzas', image: require('@/assets/pepperoni-pizza.jpg') },
-          { id: 3, name: 'Caesar Salad', category: 'Salads', image: require('@/assets/caesar-salad.jpg') },
-          { id: 4, name: 'Chocolate Cake', category: 'Desserts', image: require('@/assets/chocolate-cake.jpg') },
-          // Add more food items as needed
-        ],
-        filteredFoods: [],
-      };
+
+    <!-- Food Details Modal -->
+    <div v-if="selectedFood" class="food-modal-overlay">
+      <div class="food-modal">
+        <h2 class="food-modal-title">{{ selectedFood.name }}</h2>
+        <div class="food-modal-content">
+          <div class="image-container">
+            <img :src="selectedFood.image" :alt="selectedFood.name" class="modal-food-image" />
+          </div>
+          <div class="modal-quantity">
+            <button @click="decreaseQuantity" class="quantity-btn">-</button>
+            <span class="quantity">{{ quantity }}</span>
+            <button @click="increaseQuantity" class="quantity-btn">+</button>
+          </div>
+          <div class="modal-actions">
+            <span class="food-price">₱ {{ (selectedFood.price * quantity).toFixed(2) }}</span>
+            <button class="add-to-order-btn" @click="addToOrder">Add to Order</button>
+          </div>
+        </div>
+        <button class="cancel-btn" @click="closeFoodModal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'MainMenu',
+  data() {
+    return {
+      categories: [
+        { name: 'All', image: require('@/assets/all-category.jpg') },
+        { name: 'Burgers', image: require('@/assets/burgers-category.jpg') },
+        { name: 'Desserts', image: require('@/assets/desserts-category.jpg') },
+        { name: 'Salads', image: require('@/assets/salads-category.jpg') },
+        { name: 'Pizzas', image: require('@/assets/pizzas-category.jpg') }
+      ],
+      selectedCategory: 'All',
+      foods: [
+        { id: 1, name: 'Cheeseburger', category: 'Burgers', price: 150, image: require('@/assets/cheeseburger.jpg') },
+        { id: 2, name: 'Chocolate Cake', category: 'Desserts', price: 120, image: require('@/assets/chocolate-cake.jpg') },
+        { id: 3, name: 'Caesar Salad', category: 'Salads', price: 100, image: require('@/assets/caesar-salad.jpg') },
+        { id: 4, name: 'Pepperoni Pizza', category: 'Pizzas', price: 200, image: require('@/assets/pepperoni-pizza.jpg') }
+      ],
+      filteredFoods: [],
+      selectedFood: null,
+      quantity: 1,
+      searchQuery: ''
+    };
+  },
+  created() {
+    this.filteredFoods = this.foods; // Initialize with all foods
+  },
+  methods: {
+    filterByCategory(category) {
+      this.selectedCategory = category;
+      this.selectedFood = null; // Reset modal state
+      this.filterFoods();
     },
-    created() {
-      this.filteredFoods = this.foods; // Initialize with all foods
+    filterFoods() {
+      const query = this.searchQuery.toLowerCase();
+      this.filteredFoods = this.foods.filter(food => {
+        const matchesCategory = this.selectedCategory === 'All' || food.category === this.selectedCategory;
+        const matchesSearch = food.name.toLowerCase().includes(query);
+        return matchesCategory && matchesSearch;
+      });
     },
-    methods: {
-      filterFoods() {
-        this.filteredFoods = this.foods.filter(food => {
-          const matchesCategory = this.selectedCategory === 'all' || food.category === this.selectedCategory;
-          const matchesSearch = food.name.toLowerCase().includes(this.searchQuery.toLowerCase());
-          return matchesCategory && matchesSearch;
-        });
-      },
+    openFoodModal(food) {
+      this.selectedFood = food; // Show modal for selected food
+      this.quantity = 1; // Reset quantity to 1
     },
-  };
-  </script>
-  
-  <style scoped>
-  .main-menu {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 100vh;
-    background-image: url('c:/Users/ADMIN/Downloads/1.png'); /* Change to your preferred background */
-    background-size: cover;
-    background-position: center;
-    color: white;
-    text-align: center;
-    padding: 20px;
-  }
-  
-  .overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1; /* Keep overlay behind content */
-  }
-  
-  .content {
-    z-index: 2; /* Keep content above overlay */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex-grow: 1; /* Allow the content to grow and occupy space */
-    padding: 20px; /* Add padding for better spacing */
-  }
-  
-  .menu-container {
-    display: flex;
-    width: 100%;
-    max-width: 1200px; /* Limit width for better layout */
-  }
-  
-  .category-filter {
-    flex: 1;
-    margin-right: 20px; /* Space between category filter and food items */
-  }
-  
-  .search-filter {
-    margin: 20px 0; /* Space around the search filter */
-  }
-  
-  .title {
-    font-family: 'Playfair Display', serif;
-    font-size: 6vw; /* Responsive font size */
-    font-weight: bold;
-    margin-bottom: 20px;
-  }
-  
-  .food-items {
-    flex: 3;
-    display: flex;
-    flex-wrap: wrap; /* Allow food items to wrap */
-    justify-content: center; /* Center the items */
-    gap: 20px; /* Space between food items */
-  }
-  
-  .food-item {
-    text-align: center;
-  }
-  
-  .food-image {
-    width: 150px; /* Set a fixed size for images */
-    height: auto; /* Maintain aspect ratio */
-    border-radius: 8px;
-  }
-  
-  .food-name {
-    margin-top: 10px; /* Space between image and text */
-    font-size: 1.2vw; /* Responsive font size */
-  }
-  
-  /* Media queries for responsiveness */
-  @media (max-width: 768px) {
-    .title {
-      font-size: 4vw; /* Adjusted for mobile */
-    }
-    .food-name {
-      font-size: 3.5vw; /* Adjusted for mobile */
+    closeFoodModal() {
+      this.selectedFood = null; // Close modal
+    },
+    increaseQuantity() {
+      this.quantity += 1;
+    },
+    decreaseQuantity() {
+      if (this.quantity > 1) this.quantity -= 1;
+    },
+    addToOrder() {
+      if (this.selectedFood) {
+        const orderItem = {
+          ...this.selectedFood,
+          quantity: this.quantity,
+          totalPrice: this.selectedFood.price * this.quantity
+        };
+        console.log('Added to order:', orderItem); // Placeholder for order logic
+        this.closeFoodModal();
+      }
     }
   }
-  
-  @media (max-width: 480px) {
-    .title {
-      font-size: 3.5vw; /* Adjusted for smaller screens */
-    }
-    .food-name {
-      font-size: 3vw; /* Adjusted for smaller screens */
-    }
-  }
-  </style>
-  
+};
+</script>
+
+<style scoped>
+.main-menu {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 120px; /* Adjusted width for better alignment */
+  background-color: #f4f4f4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+}
+
+.logo-container {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.logo-image {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.sidebar-item {
+  margin: 10px 0;
+  cursor: pointer;
+  width: 80px; /* Added width to align with food containers */
+  height: 80px; /* Added height to align with food containers */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  transition: border-color 0.3s;
+}
+
+.sidebar-item.active {
+  border-color: #ffcc00; /* Highlight for active category */
+}
+
+.sidebar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.menu-content {
+  flex-grow: 1;
+  padding: 20px;
+}
+
+.search-bar {
+  margin-bottom: 10px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px;
+  font-size: 1em;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.food-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  justify-items: center;
+}
+
+.food-item {
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 300px;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.food-image {
+  width: 100%;
+  height: 60%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.food-details {
+  margin-top: 5px;
+}
+
+.food-name {
+  font-weight: bold;
+}
+
+.food-price-container {
+  margin-top: 5px;
+}
+
+.food-price {
+  color: #888;
+}
+
+.food-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.food-modal {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  text-align: center;
+}
+
+.image-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  width: 100%;
+  height: 200px;
+}
+
+.modal-food-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.modal-quantity {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.quantity-btn {
+  width: 30px;
+  height: 30px;
+  font-size: 1.2em;
+  background-color: #ffcc00;
+  border: none;
+  cursor: pointer;
+  margin: 0 5px;
+}
+
+.quantity {
+  font-size: 1.2em;
+}
+
+.modal-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.add-to-order-btn {
+  padding: 8px 16px;
+  background-color: #ffcc00;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.cancel-btn {
+  margin-top: 10px;
+  padding: 8px 16px;
+  background-color: red;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+</style>

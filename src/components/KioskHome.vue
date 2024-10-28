@@ -48,7 +48,7 @@ export default {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-image: url('c:\Users\ADMIN\Downloads\International Coffee Day Facebook Cover.png');
+  background-image: url('@/assets/kioskhomebg.png');
   background-size: cover;
   background-position: center;
   color: white;

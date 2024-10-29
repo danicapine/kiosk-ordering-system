@@ -81,18 +81,19 @@ export default {
   data() {
     return {
       categories: [
-        { name: 'All', image: require('@/assets/all-category.jpg') },
-        { name: 'Burgers', image: require('@/assets/burgers-category.jpg') },
-        { name: 'Desserts', image: require('@/assets/desserts-category.jpg') },
-        { name: 'Salads', image: require('@/assets/salads-category.jpg') },
-        { name: 'Pizzas', image: require('@/assets/pizzas-category.jpg') }
+        { name: 'All', image: require('@/assets/all.png') },
+        { name: 'Rice', image: require('@/assets/rice.png') },
+        { name: 'Chicken', image: require('@/assets/chicken.png') },
+        { name: 'Burgers', image: require('@/assets/burgers.png') },
+        { name: 'Pasta', image: require('@/assets/pasta.png') },
+       // { name: 'Cheat', image: require('@/assets/cheat.png') },
       ],
       selectedCategory: 'All',
       foods: [
-        { id: 1, name: 'Cheeseburger', category: 'Burgers', price: 150, image: require('@/assets/cheeseburger.jpg') },
-        { id: 2, name: 'Chocolate Cake', category: 'Desserts', price: 120, image: require('@/assets/chocolate-cake.jpg') },
-        { id: 3, name: 'Caesar Salad', category: 'Salads', price: 100, image: require('@/assets/caesar-salad.jpg') },
-        { id: 4, name: 'Pepperoni Pizza', category: 'Pizzas', price: 200, image: require('@/assets/pepperoni-pizza.jpg') }
+        { id: 1, name: 'Crispy Chicken', category: 'Rice', price: 149, image: require('@/assets/crispy.png') },
+        { id: 2, name: 'Burger Steak', category: 'Rice', price: 129, image: require('@/assets/burgersteak.png') },
+        { id: 3, name: 'Fried Liempo', category: 'Rice', price: 139, image: require('@/assets/friedliempo.png') },
+        { id: 4, name: 'Buttered Squid', category: 'Rice', price: 129, image: require('@/assets/buttered.png') },
       ],
       filteredFoods: [],
       selectedFood: null,
@@ -152,7 +153,7 @@ export default {
 }
 
 .sidebar {
-  width: 120px; /* Adjusted width for better alignment */
+  width: 80px; /* Adjusted width for better alignment */
   background-color: #f4f4f4;
   display: flex;
   flex-direction: column;
@@ -161,13 +162,13 @@ export default {
 }
 
 .logo-container {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   text-align: center;
 }
 
 .logo-image {
-  width: 150px;
-  height: 150px;
+  width: 120px;
+  height: 120px;
   object-fit: contain;
   border-radius: 8px;
 }
@@ -175,8 +176,8 @@ export default {
 .sidebar-item {
   margin: 10px 0;
   cursor: pointer;
-  width: 80px; /* Added width to align with food containers */
-  height: 80px; /* Added height to align with food containers */
+  width: 60px; /* Added width to align with food containers */
+  height: 60px; /* Added height to align with food containers */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -186,7 +187,7 @@ export default {
 }
 
 .sidebar-item.active {
-  border-color: #ffcc00; /* Highlight for active category */
+  border-color: rgba(79, 53, 38, 0.8); /* Highlight for active category */
 }
 
 .sidebar-image {
@@ -216,16 +217,16 @@ export default {
 .food-items {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
+  gap: 25px;
   justify-items: center;
 }
 
 .food-item {
   background-color: white;
-  border: 1px solid #ccc;
+  border: 1px solid black;
   border-radius: 8px;
-  width: 300px;
-  height: 400px;
+  width: 250px;
+  height: 350px;
   display: flex;
   flex-direction: column;
   align-items: center;

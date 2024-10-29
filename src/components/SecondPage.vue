@@ -6,17 +6,14 @@
       <img :src="require('@/assets/apple-touch-icon.png')" alt="icon" />
     </div>
     <div class="content">
-      <h1 class="title">Where will you be eating today?</h1>
       <div class="options">
         <!-- Eat In Image Button -->
         <button @click="selectOption('eat-in')" class="image-button">
-          <img :src="require('@/assets/eat-in-image.jpg')" alt="Eat In" class="button-image" />
-          <span class="button-text">DINE IN</span>
+          <img :src="require('@/assets/dinein.png')" alt="Eat In" class="button-image" />
         </button>
         <!-- Take Out Image Button -->
         <button @click="selectOption('take-out')" class="image-button">
-          <img :src="require('@/assets/take-out-image.jpg')" alt="Take Out" class="button-image" />
-          <span class="button-text">TAKE OUT</span>
+          <img :src="require('@/assets/takeout.png')" alt="Take Out" class="button-image" />
         </button>
       </div>
     </div>
@@ -92,7 +89,7 @@ export default {
 
 .title {
   font-family: 'Playfair Display', serif;
-  font-size: 6vw; /* Responsive font size */
+  font-size: 3vw !important; 
   font-weight: bold;
   margin-bottom: 10px;
 }

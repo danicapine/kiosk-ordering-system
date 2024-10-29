@@ -94,6 +94,16 @@ export default {
         { id: 2, name: 'Burger Steak', category: 'Rice', price: 129, image: require('@/assets/burgersteak.png') },
         { id: 3, name: 'Fried Liempo', category: 'Rice', price: 139, image: require('@/assets/friedliempo.png') },
         { id: 4, name: 'Buttered Squid', category: 'Rice', price: 129, image: require('@/assets/buttered.png') },
+        { id: 5, name: 'Fried Bangus', category: 'Rice', price: 139, image: require('@/assets/friedbangus.png') },
+        { id: 6, name: 'Buffalo Shrimp', category: 'Rice', price: 139, image: require('@/assets/shrimp.png') },
+        { id: 7, name: 'Pork Adobo', category: 'Rice', price: 139, image: require('@/assets/adobo.png') },
+        { id: 8, name: 'Beef Tapa', category: 'Rice', price: 139, image: require('@/assets/tapa.png') },
+        { id: 9, name: 'Parmesan Chicken', category: 'Chicken', price: 129, image: require('@/assets/parmesan.png') },
+        { id: 10, name: 'Sweet Chilli Chicken', category: 'Chicken', price: 129, image: require('@/assets/sweetchilli.png') },
+        { id: 11, name: 'Buffalo Chicken', category: 'Chicken', price: 129, image: require('@/assets/buffalo.png') },
+        { id: 12, name: 'Classic Chicken', category: 'Chicken', price: 129, image: require('@/assets/classic.png') },
+
+
       ],
       filteredFoods: [],
       selectedFood: null,

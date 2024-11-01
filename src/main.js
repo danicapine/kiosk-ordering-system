@@ -4,6 +4,8 @@ import Vuetify from 'vuetify';
 import 'vuetify/dist/vuetify.min.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 import router from './router'; // Import the router
+import 'bootstrap/dist/css/bootstrap.css';
+
 
 Vue.use(Vuetify);
 

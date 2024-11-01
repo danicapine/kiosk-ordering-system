@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.6.0",
+    "bootstrap": "^5.3.3",
+    "firebase": "^11.0.1",
     "vue": "^2.7.16",
     "vue-router": "^3.6.5",
     "vuetify": "^2.7.2"
@@ -42,5 +44,10 @@
     "last 2 versions",
     "not dead",
     "not ie 11"
-  ]
+  ],
+  "description": "```\r npm install\r ```",
+  "main": "babel.config.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

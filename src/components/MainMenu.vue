@@ -2,7 +2,6 @@
   <div class="main-menu">
     <!-- Sidebar Navigation -->
     <div class="sidebar">
-      <!-- Logo -->
       <div class="logo-container">
         <img src="@/assets/apple-touch-icon.png" alt="Logo" class="logo-image" />
       </div>
@@ -86,7 +85,6 @@ export default {
         { name: 'Chicken', image: require('@/assets/chicken.png') },
         { name: 'Burgers', image: require('@/assets/burgers.png') },
         { name: 'Pasta', image: require('@/assets/pasta.png') },
-       // { name: 'Cheat', image: require('@/assets/cheat.png') },
       ],
       selectedCategory: 'All',
       foods: [
@@ -102,8 +100,6 @@ export default {
         { id: 10, name: 'Sweet Chilli Chicken', category: 'Chicken', price: 129, image: require('@/assets/sweetchilli.png') },
         { id: 11, name: 'Buffalo Chicken', category: 'Chicken', price: 129, image: require('@/assets/buffalo.png') },
         { id: 12, name: 'Classic Chicken', category: 'Chicken', price: 129, image: require('@/assets/classic.png') },
-
-
       ],
       filteredFoods: [],
       selectedFood: null,
@@ -112,12 +108,12 @@ export default {
     };
   },
   created() {
-    this.filteredFoods = this.foods; // Initialize with all foods
+    this.filteredFoods = this.foods;
   },
   methods: {
     filterByCategory(category) {
       this.selectedCategory = category;
-      this.selectedFood = null; // Reset modal state
+      this.selectedFood = null;
       this.filterFoods();
     },
     filterFoods() {
@@ -129,11 +125,11 @@ export default {
       });
     },
     openFoodModal(food) {
-      this.selectedFood = food; // Show modal for selected food
-      this.quantity = 1; // Reset quantity to 1
+      this.selectedFood = food;
+      this.quantity = 1;
     },
     closeFoodModal() {
-      this.selectedFood = null; // Close modal
+      this.selectedFood = null;
     },
     increaseQuantity() {
       this.quantity += 1;
@@ -144,12 +140,29 @@ export default {
     addToOrder() {
       if (this.selectedFood) {
         const orderItem = {
-          ...this.selectedFood,
+          id: this.selectedFood.id,
+          name: this.selectedFood.name,
+          price: this.selectedFood.price,
           quantity: this.quantity,
-          totalPrice: this.selectedFood.price * this.quantity
+          totalPrice: this.selectedFood.price * this.quantity,
+          image: this.selectedFood.image
         };
-        console.log('Added to order:', orderItem); // Placeholder for order logic
+
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        const existingItemIndex = cart.findIndex(item => item.id === orderItem.id);
+
+        if (existingItemIndex !== -1) {
+          cart[existingItemIndex].quantity += orderItem.quantity;
+          cart[existingItemIndex].totalPrice += orderItem.totalPrice;
+        } else {
+          cart.push(orderItem);
+        }
+
+        localStorage.setItem('cart', JSON.stringify(cart));
+
         this.closeFoodModal();
+        this.$router.push('/review-order'); // Redirect to Review Order page
       }
     }
   }
@@ -157,37 +170,39 @@ export default {
 </script>
 
 <style scoped>
+/* Same styles as before */
+</style>
+
+<style scoped>
 .main-menu {
   display: flex;
   height: 100vh;
 }
 
+/* Sidebar and Main Menu Content CSS */
 .sidebar {
-  width: 80px; /* Adjusted width for better alignment */
+  width: 80px;
   background-color: #f4f4f4;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 10px;
 }
-
 .logo-container {
   margin-bottom: 10px;
   text-align: center;
 }
-
 .logo-image {
   width: 120px;
   height: 120px;
   object-fit: contain;
   border-radius: 8px;
 }
-
 .sidebar-item {
   margin: 10px 0;
   cursor: pointer;
-  width: 60px; /* Added width to align with food containers */
-  height: 60px; /* Added height to align with food containers */
+  width: 60px;
+  height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -195,11 +210,9 @@ export default {
   border-radius: 8px;
   transition: border-color 0.3s;
 }
-
 .sidebar-item.active {
-  border-color: rgba(79, 53, 38, 0.8); /* Highlight for active category */
+  border-color: rgba(79, 53, 38, 0.8);
 }
-
 .sidebar-image {
   width: 100%;
   height: 100%;
@@ -207,15 +220,14 @@ export default {
   border-radius: 8px;
 }
 
+/* Food Items and Modal CSS */
 .menu-content {
   flex-grow: 1;
   padding: 20px;
 }
-
 .search-bar {
   margin-bottom: 10px;
 }
-
 .search-input {
   width: 100%;
   padding: 10px;
@@ -223,14 +235,12 @@ export default {
   border: 1px solid #ccc;
   border-radius: 4px;
 }
-
 .food-items {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 25px;
   justify-items: center;
 }
-
 .food-item {
   background-color: white;
   border: 1px solid black;
@@ -245,30 +255,26 @@ export default {
   text-align: center;
   cursor: pointer;
 }
-
 .food-image {
   width: 100%;
   height: 60%;
   object-fit: cover;
   border-radius: 8px;
 }
-
 .food-details {
   margin-top: 5px;
 }
-
 .food-name {
   font-weight: bold;
 }
-
 .food-price-container {
   margin-top: 5px;
 }
-
 .food-price {
   color: #888;
 }
 
+/* Modal CSS */
 .food-modal-overlay {
   position: fixed;
   top: 0;
@@ -280,7 +286,6 @@ export default {
   justify-content: center;
   align-items: center;
 }
-
 .food-modal {
   background-color: white;
   padding: 20px;
@@ -288,7 +293,6 @@ export default {
   width: 300px;
   text-align: center;
 }
-
 .image-container {
   display: flex;
   align-items: center;
@@ -297,21 +301,18 @@ export default {
   width: 100%;
   height: 200px;
 }
-
 .modal-food-image {
   max-width: 100%;
   max-height: 100%;
   object-fit: cover;
   border-radius: 8px;
 }
-
 .modal-quantity {
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 10px 0;
 }
-
 .quantity-btn {
   width: 30px;
   height: 30px;
@@ -321,17 +322,14 @@ export default {
   cursor: pointer;
   margin: 0 5px;
 }
-
 .quantity {
   font-size: 1.2em;
 }
-
 .modal-actions {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-
 .add-to-order-btn {
   padding: 8px 16px;
   background-color: #ffcc00;
@@ -340,7 +338,6 @@ export default {
   cursor: pointer;
   margin-top: 10px;
 }
-
 .cancel-btn {
   margin-top: 10px;
   padding: 8px 16px;

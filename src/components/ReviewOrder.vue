@@ -95,13 +95,12 @@ export default {
       this.$router.push('/main-menu');
     },
     proceedToCheckout() {
-      this.$router.push('/checkout');
+      // Redirect to Payment Options page
+      this.$router.push('/payment-options');
     },
-
-    // Generate Suggested Items based on cart contents
     generateSuggestedItems() {
       const popularItems = [
-      { id: 9, name: 'Parmesan Chicken', category: 'Chicken', price: 129, image: require('@/assets/parmesan.png') },
+        { id: 9, name: 'Parmesan Chicken', category: 'Chicken', price: 129, image: require('@/assets/parmesan.png') },
         { id: 10, name: 'Sweet Chilli Chicken', category: 'Chicken', price: 129, image: require('@/assets/sweetchilli.png') },
         { id: 11, name: 'Buffalo Chicken', category: 'Chicken', price: 129, image: require('@/assets/buffalo.png') },
         { id: 12, name: 'Classic Chicken', category: 'Chicken', price: 129, image: require('@/assets/classic.png') }
@@ -111,8 +110,6 @@ export default {
         return !this.cart.some(cartItem => cartItem.id === item.id);
       });
     },
-
-    // Add a suggested item to the cart
     addSuggestedItem(suggestion) {
       const existingItemIndex = this.cart.findIndex(item => item.id === suggestion.id);
 
@@ -128,6 +125,7 @@ export default {
   }
 };
 </script>
+
 
 <style scoped>
 .review-order {

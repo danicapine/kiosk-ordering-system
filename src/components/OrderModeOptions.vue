@@ -18,22 +18,54 @@
   </template>
   
   <script>
+  import { db } from "@/config/firebaseConfig";
+  import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+  
   export default {
     name: "OrderModeOptions",
     methods: {
-      selectOrderMode(orderMode) {
-        if (orderMode === 'table') {
-          // Handle table service option (you may navigate to a specific page or handle logic here)
-          this.$router.push('/table-service');
-        } else if (orderMode === 'counter') {
-          // Handle counter pickup option
-          this.$router.push('/counter-pickup');
+      async selectOrderMode(orderMode) {
+        // Retrieve payment method from query parameters
+        const paymentMethod = this.$route.query.paymentMethod || "Cash";
+  
+        // Generate a unique order number
+        const orderNumber = "ORD-" + Math.floor(1000 + Math.random() * 9000);
+  
+        // Retrieve items from cart in local storage
+        const items = JSON.parse(localStorage.getItem("cart")) || [];
+  
+        // Calculate total price
+        const total = this.calculateTotal(items);
+  
+        // Prepare order data
+        const orderData = {
+          orderNumber,
+          items, // items now includes instructions
+          paymentMethod,
+          orderMode,
+          status: "queued",
+          createdAt: serverTimestamp(),
+          total,
+        };
+  
+        // Save order to Firestore and navigate to confirmation screen
+        try {
+          await addDoc(collection(db, "orders"), orderData);
+          if (this.$route.name !== "ConfirmationScreen") {
+            this.$router.push({ name: "ConfirmationScreen", params: { orderNumber } });
+          }
+        } catch (error) {
+          console.error("Error saving order to Firestore:", error);
+          alert("Failed to save order. Please try again.");
         }
       },
       goBack() {
-        this.$router.push('/payment-options');
-      }
-    }
+        this.$router.push("/payment-options");
+      },
+      calculateTotal(items) {
+        return items.reduce((acc, item) => acc + item.totalPrice, 0);
+      },
+    },
   };
   </script>
   

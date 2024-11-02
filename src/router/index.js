@@ -8,6 +8,7 @@ import OrderQueue from '@/components/OrderQueue.vue';
 import ReviewOrder from '@/components/ReviewOrder.vue';
 import PaymentOptions from '@/components/PaymentOptions.vue'; // New payment options component
 import OrderModeOptions from '@/components/OrderModeOptions.vue';
+import ConfirmationScreen from "@/components/ConfirmationScreen.vue";
 /*import CashlessPayment from '@/components/CashlessPayment.vue'; // New cashless payment component
 import CashPayment from '@/components/CashPayment.vue'; // New cash payment component*/
 
@@ -55,6 +56,12 @@ export default new Router({
       path: '/order-mode-options',
       name: 'OrderModeOptions',
       component: OrderModeOptions,
+    },
+    {
+      path: "/confirmation",
+      name: "ConfirmationScreen",
+      component: ConfirmationScreen,
+      props: route => ({ orderNumber: route.params.orderNumber })
     },
     /*{
       path: '/cashless-payment', // New route for the Cashless Payment page

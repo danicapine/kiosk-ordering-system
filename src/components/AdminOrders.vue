@@ -10,36 +10,38 @@
           <thead>
             <tr>
               <th>Order Number</th>
-              <th>Price ($)</th>
-              <th>Count</th>
+              <th>Price (₱)</th>
+              <th>Quantity</th>
               <th>Items</th>
               <th>Type</th>
               <th>Payment</th>
-              <th>State</th>
+              <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(order, index) in orders" :key="index">
               <td>{{ order.orderNumber }}</td>
-              <td>{{ order.totalPrice.toFixed(2) }}</td>
+              <td>{{ order.total.toFixed(2) }}</td>
               <td>{{ order.items.length }}</td>
               <td>
                 <ul class="list-unstyled mb-0">
-                  <li v-for="item in order.items" :key="item.itemId">
-                    {{ item.name }} x {{ item.quantity }}
+                  <li v-for="item in order.items" :key="item.name">
+                    <strong>{{ item.name }}</strong> x {{ item.quantity }}
+                    <p v-if="item.instructions" class="text-muted">Instructions: {{ item.instructions }}</p>
                   </li>
                 </ul>
               </td>
-              <td>{{ order.type || 'N/A' }}</td>
-              <td>{{ order.payment || 'N/A' }}</td>
+              <td>{{ order.orderMode || 'N/A' }}</td>
+              <td>{{ order.paymentMethod || 'N/A' }}</td>
               <td>
-                <span :class="getStateClass(order.state)">{{ order.state }}</span>
+                <span :class="getStateClass(order.status)">{{ order.status }}</span>
               </td>
               <td>
                 <button class="btn btn-success btn-sm mr-1" @click="updateOrderState(order.id, 'Ready')">READY</button>
                 <button class="btn btn-danger btn-sm mr-1" @click="updateOrderState(order.id, 'Cancelled')">CANCEL</button>
-                <button class="btn btn-secondary btn-sm" @click="updateOrderState(order.id, 'Delivered')">DELIVER</button>
+                <button class="btn btn-secondary btn-sm mr-1" @click="updateOrderState(order.id, 'Delivered')">DELIVER</button>
+                <button class="btn btn-outline-danger btn-sm delete-btn" @click="deleteOrder(order.id)">DELETE</button>
               </td>
             </tr>
           </tbody>
@@ -52,7 +54,7 @@
 
 <script>
 import { db } from "@/config/firebaseConfig";
-import { collection, doc, updateDoc, onSnapshot } from "firebase/firestore";
+import { collection, doc, deleteDoc, updateDoc, onSnapshot } from "firebase/firestore";
 
 export default {
   name: "AdminPage",
@@ -62,7 +64,7 @@ export default {
     };
   },
   created() {
-    this.fetchOrders(); // Real-time updates for orders
+    this.fetchOrders(); // Set up real-time updates for orders
   },
   methods: {
     // Fetch Orders in Real-Time
@@ -74,6 +76,9 @@ export default {
           orderNumber: doc.data().orderNumber || doc.id,
           ...doc.data()
         }));
+      }, (error) => {
+        console.error("Error fetching orders:", error);
+        alert("There was an error fetching orders.");
       });
     },
 
@@ -81,19 +86,35 @@ export default {
     async updateOrderState(orderId, newState) {
       try {
         const orderDoc = doc(db, "orders", orderId);
-        await updateDoc(orderDoc, { state: newState });
-        alert(`Order updated to ${newState}`);
+        await updateDoc(orderDoc, { status: newState });
+        alert(`Order status updated to ${newState}`);
       } catch (error) {
-        console.error("Error updating order state:", error);
+        console.error("Error updating order status:", error);
+        alert("There was an error updating the order status.");
+      }
+    },
+
+    // Delete Order
+    async deleteOrder(orderId) {
+      if (confirm("Are you sure you want to delete this order? This action cannot be undone.")) {
+        try {
+          await deleteDoc(doc(db, "orders", orderId));
+          alert("Order deleted successfully.");
+        } catch (error) {
+          console.error("Error deleting order:", error);
+          alert("There was an error deleting the order.");
+        }
       }
     },
 
     // Get State Class for styling
-    getStateClass(state) {
-      switch (state) {
+    getStateClass(status) {
+      switch (status) {
         case "Ready":
           return "badge badge-success";
-        case "In Progress":
+        case "Queued":
+          return "badge badge-info";
+        case "Preparing":
           return "badge badge-warning";
         case "Cancelled":
           return "badge badge-danger";
@@ -143,5 +164,17 @@ export default {
   color: white;
   padding: 5px 10px;
   border-radius: 5px;
+}
+
+.badge-info {
+  background-color: #17a2b8;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+/* Add spacing to the DELETE button */
+.delete-btn {
+  margin-left: 5px; /* Add space between "Deliver" and "Delete" */
 }
 </style>

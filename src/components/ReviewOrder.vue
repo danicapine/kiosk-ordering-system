@@ -95,6 +95,18 @@ export default {
       this.$router.push('/main-menu');
     },
     proceedToCheckout() {
+      // Ensure that instructions are saved with each item
+      const updatedCart = this.cart.map(item => ({
+        id: item.id,
+        name: item.name,
+        quantity: item.quantity,
+        totalPrice: item.totalPrice,
+        instructions: item.instructions || "" // Default to empty if no instructions provided
+      }));
+
+      // Store the updated cart with instructions in local storage
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
+
       // Redirect to Payment Options page
       this.$router.push('/payment-options');
     },
@@ -135,32 +147,32 @@ export default {
   background-color: #f9f9f9;
   border-radius: 8px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-  font-size: 1.2em;
+  font-size: 1.2em; /* Standardized font size */
 }
 
 h2 {
   text-align: center;
   font-size: 2em;
   color: #333;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 }
 
 .order-item {
   display: flex;
   align-items: flex-start;
-  margin-bottom: 20px;
-  padding: 20px;
+  margin-bottom: 15px;
+  padding: 15px;
   background-color: #ffffff;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .item-image {
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  height: 80px;
   object-fit: cover;
   border-radius: 8px;
-  margin-right: 20px;
+  margin-right: 15px;
   border: 1px solid #ddd;
 }
 
@@ -169,15 +181,15 @@ h2 {
 }
 
 .item-name {
-  font-size: 1.5em;
+  font-size: 1em; /* Slightly larger font for product name */
   color: #333;
   margin: 0;
 }
 
 .item-price {
-  font-size: 1.2em;
+  font-size: 0.9em; /* Standardized font size for price */
   color: #666;
-  margin: 5px 0 15px 0;
+  margin: 5px 0 10px 0;
 }
 
 .quantity-controls {
@@ -187,8 +199,8 @@ h2 {
 }
 
 .quantity {
-  margin: 0 15px;
-  font-size: 1.3em;
+  margin: 0 10px;
+  font-size: 0.9em; /* Standardized font size */
   color: #333;
 }
 
@@ -197,9 +209,9 @@ h2 {
   color: white;
   border: none;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  font-size: 1.5em;
+  width: 30px;
+  height: 30px;
+  font-size: 0.9em; /* Standardized font size */
   cursor: pointer;
   transition: background-color 0.3s;
 }
@@ -211,12 +223,12 @@ h2 {
 .special-instructions {
   width: 100%;
   margin-top: 10px;
-  padding: 10px;
-  font-size: 1em;
+  padding: 8px;
+  font-size: 0.8em; /* Standardized font size */
   border-radius: 4px;
   border: 1px solid #ddd;
   resize: vertical;
-  min-height: 60px;
+  min-height: 50px;
 }
 
 .remove-btn {
@@ -224,8 +236,8 @@ h2 {
   color: white;
   border: none;
   border-radius: 4px;
-  padding: 8px 12px;
-  font-size: 0.9em;
+  padding: 6px 10px;
+  font-size: 0.9em; /* Standardized font size */
   cursor: pointer;
   transition: background-color 0.3s;
 }
@@ -235,16 +247,16 @@ h2 {
 }
 
 .order-summary {
-  margin-top: 30px;
-  padding-top: 20px;
+  margin-top: 20px;
+  padding-top: 15px;
   text-align: center;
   border-top: 2px solid #ddd;
 }
 
 .total-text {
-  font-size: 2em;
+  font-size: 1.2em; /* Slightly larger for emphasis */
   color: #333;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .buttons-container {
@@ -257,8 +269,8 @@ h2 {
   color: white;
   border: none;
   border-radius: 4px;
-  padding: 12px 20px;
-  font-size: 1em;
+  padding: 10px 15px;
+  font-size: 0.9em; /* Standardized font size */
   cursor: pointer;
   transition: background-color 0.3s;
 }
@@ -272,8 +284,8 @@ h2 {
   color: white;
   border: none;
   border-radius: 4px;
-  padding: 12px 20px;
-  font-size: 1em;
+  padding: 10px 15px;
+  font-size: 0.9em; /* Standardized font size */
   cursor: pointer;
   transition: background-color 0.3s;
 }
@@ -284,34 +296,47 @@ h2 {
 
 .empty-cart-message {
   text-align: center;
-  font-size: 1.2em;
+  font-size: 0.9em; /* Standardized font size */
   color: #777;
-  margin-top: 40px;
+  margin-top: 30px;
 }
 
 /* Suggested Items Styling */
 .suggested-items {
-  margin-top: 30px;
-  padding-top: 20px;
+  margin-top: 20px;
+  padding-top: 15px;
   border-top: 2px solid #ddd;
 }
 
 .suggested-item {
   display: flex;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 8px;
+  font-size: 1em; /* Standardized font size */
 }
 
 .suggested-image {
-  width: 50px;
-  height: 50px;
+  width: 45px;
+  height: 45px;
   object-fit: cover;
   border-radius: 8px;
-  margin-right: 10px;
+  margin-right: 8px;
 }
 
 .suggestion-details {
   flex-grow: 1;
+}
+
+.suggestion-details h4 {
+  font-size: 1em; /* Slightly larger font for suggested item names */
+  margin: 0;
+  color: #333;
+}
+
+.suggestion-details p {
+  font-size: 0.9em; /* Standardized font size for price */
+  margin: 2px 0;
+  color: #666;
 }
 
 .add-suggestion-btn {
@@ -319,7 +344,8 @@ h2 {
   color: white;
   border: none;
   border-radius: 4px;
-  padding: 5px 10px;
+  padding: 5px 8px;
+  font-size: 0.9em; /* Standardized font size */
   cursor: pointer;
 }
 </style>

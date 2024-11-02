@@ -3,12 +3,12 @@
       <div class="payment-options">
         <h2>How would you like to pay?</h2>
         <div class="options">
-          <button @click="selectPayment('cashless')" class="option-btn">
+          <button @click="selectPayment('G-Cash')" class="option-btn">
             <img src="@/assets/cashless.png" alt="Cashless Payment" />
             <p>Pay Here (Cashless)</p>
           </button>
           <p>Or</p>
-          <button @click="selectPayment('cash')" class="option-btn">
+          <button @click="selectPayment('Cash')" class="option-btn">
             <img src="@/assets/cash.png" alt="Cash Payment" />
             <p>Pay at the Counter (Cash)</p>
           </button>
@@ -21,20 +21,23 @@
   <script>
   export default {
     name: "PaymentOptions",
+    data() {
+      return {
+        selectedPaymentMethod: null,
+      };
+    },
     methods: {
-        selectPayment(paymentMethod) {
-        if (paymentMethod === 'cashless') {
-            this.$router.push('/order-mode-options');
-        } else if (paymentMethod === 'cash') {
-            this.$router.push('/order-mode-options');
-        }
-        },
+      selectPayment(paymentMethod) {
+        this.selectedPaymentMethod = paymentMethod;
+        this.$router.push({ name: "OrderModeOptions", query: { paymentMethod } });
+      },
       goBack() {
-        this.$router.push('/review-order');
-      }
-    }
+        this.$router.push("/review-order");
+      },
+    },
   };
   </script>
+  
   
   <style scoped>
   .payment-options-container {

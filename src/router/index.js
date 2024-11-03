@@ -4,7 +4,7 @@ import KioskHome from '../components/KioskHome.vue'; // Home screen for the kios
 import SecondPage from '../components/SecondPage.vue'; // Additional page component
 import MainMenu from '../components/MainMenu.vue'; // Main menu where items are selected
 import AdminOrders from '../components/AdminOrders.vue'; // Admin page for viewing orders
-import OrderQueue from '@/components/OrderQueue.vue';
+import OrderQueue from '@/components/QueuePage.vue';
 import ReviewOrder from '@/components/ReviewOrder.vue';
 import PaymentOptions from '@/components/PaymentOptions.vue'; // New payment options component
 import OrderModeOptions from '@/components/OrderModeOptions.vue';

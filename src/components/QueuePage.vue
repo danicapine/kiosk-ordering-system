@@ -6,7 +6,7 @@
         <!-- In Progress Orders -->
         <div class="col-md-6">
           <div class="card">
-            <div class="card-header bg-dark text-white">In Progress</div>
+            <div class="card-header bg-dark text-white">Preparing</div>
             <ul class="list-group list-group-flush">
               <li v-for="order in inProgressOrders" :key="order.id" class="list-group-item">
                 Order #{{ order.orderNumber }}

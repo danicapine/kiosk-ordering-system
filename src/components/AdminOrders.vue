@@ -22,7 +22,7 @@
           <tbody>
             <tr v-for="(order, index) in orders" :key="index">
               <td>{{ order.orderNumber }}</td>
-              <td>{{ order.total.toFixed(2) }}</td>
+              <td>{{ order.total ? order.total.toFixed(2) : 'N/A' }}</td>
               <td>{{ order.items.length }}</td>
               <td>
                 <ul class="list-unstyled mb-0">
@@ -38,10 +38,36 @@
                 <span :class="getStateClass(order.status)">{{ order.status }}</span>
               </td>
               <td>
-                <button class="btn btn-success btn-sm mr-1" @click="updateOrderState(order.id, 'Ready')">READY</button>
-                <button class="btn btn-danger btn-sm mr-1" @click="updateOrderState(order.id, 'Cancelled')">CANCEL</button>
-                <button class="btn btn-secondary btn-sm mr-1" @click="updateOrderState(order.id, 'Delivered')">DELIVER</button>
-                <button class="btn btn-outline-danger btn-sm delete-btn" @click="deleteOrder(order.id)">DELETE</button>
+                <button
+                  class="btn btn-warning btn-sm mr-1"
+                  @click="updateOrderState(order.id, 'Preparing')"
+                >
+                  PREPARING
+                </button>
+                <button
+                  class="btn btn-success btn-sm mr-1"
+                  @click="updateOrderState(order.id, 'Ready')"
+                >
+                  READY
+                </button>
+                <button
+                  class="btn btn-danger btn-sm mr-1"
+                  @click="updateOrderState(order.id, 'Cancelled')"
+                >
+                  CANCEL
+                </button>
+                <button
+                  class="btn btn-secondary btn-sm mr-1"
+                  @click="updateOrderState(order.id, 'Delivered')"
+                >
+                  DELIVER
+                </button>
+                <button
+                  class="btn btn-outline-danger btn-sm delete-btn"
+                  @click="deleteOrder(order.id)"
+                >
+                  DELETE
+                </button>
               </td>
             </tr>
           </tbody>
@@ -87,7 +113,7 @@ export default {
       try {
         const orderDoc = doc(db, "orders", orderId);
         await updateDoc(orderDoc, { status: newState });
-        alert(`Order status updated to ${newState}`);
+        console.log(`Order status updated to ${newState}`);
       } catch (error) {
         console.error("Error updating order status:", error);
         alert("There was an error updating the order status.");
@@ -99,7 +125,7 @@ export default {
       if (confirm("Are you sure you want to delete this order? This action cannot be undone.")) {
         try {
           await deleteDoc(doc(db, "orders", orderId));
-          alert("Order deleted successfully.");
+          console.log("Order deleted successfully.");
         } catch (error) {
           console.error("Error deleting order:", error);
           alert("There was an error deleting the order.");

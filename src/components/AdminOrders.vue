@@ -38,36 +38,38 @@
                 <span :class="getStateClass(order.status)">{{ order.status }}</span>
               </td>
               <td>
-                <button
-                  class="btn btn-warning btn-sm mr-1"
-                  @click="updateOrderState(order.id, 'Preparing')"
-                >
-                  PREPARING
-                </button>
-                <button
-                  class="btn btn-success btn-sm mr-1"
-                  @click="updateOrderState(order.id, 'Ready')"
-                >
-                  READY
-                </button>
-                <button
-                  class="btn btn-danger btn-sm mr-1"
-                  @click="updateOrderState(order.id, 'Cancelled')"
-                >
-                  CANCEL
-                </button>
-                <button
-                  class="btn btn-secondary btn-sm mr-1"
-                  @click="updateOrderState(order.id, 'Delivered')"
-                >
-                  DELIVER
-                </button>
-                <button
-                  class="btn btn-outline-danger btn-sm delete-btn"
-                  @click="deleteOrder(order.id)"
-                >
-                  DELETE
-                </button>
+                <div class="btn-group" role="group" aria-label="Order actions">
+                  <button
+                    class="btn btn-warning btn-sm mr-1"
+                    @click="updateOrderState(order.id, 'Preparing')"
+                  >
+                    PREPARING
+                  </button>
+                  <button
+                    class="btn btn-success btn-sm mr-1"
+                    @click="updateOrderState(order.id, 'Ready')"
+                  >
+                    READY
+                  </button>
+                  <button
+                    class="btn btn-danger btn-sm mr-1"
+                    @click="updateOrderState(order.id, 'Cancelled')"
+                  >
+                    CANCEL
+                  </button>
+                  <button
+                    class="btn btn-secondary btn-sm mr-1"
+                    @click="updateOrderState(order.id, 'Delivered')"
+                  >
+                    DELIVER
+                  </button>
+                  <button
+                    class="btn btn-outline-danger btn-sm delete-btn"
+                    @click="deleteOrder(order.id)"
+                  >
+                    DELETE
+                  </button>
+                </div>
               </td>
             </tr>
           </tbody>
@@ -201,6 +203,11 @@ export default {
 
 /* Add spacing to the DELETE button */
 .delete-btn {
-  margin-left: 5px; /* Add space between "Deliver" and "Delete" */
+  margin-left: 5px; /* Ensure spacing between the DELETE button and others */
+}
+
+/* Add margin to all buttons in the action group */
+.btn-group .btn {
+  margin-right: 5px; /* Small space between buttons */
 }
 </style>

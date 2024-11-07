@@ -5,8 +5,11 @@
       <div v-for="item in cart" :key="item.id" class="order-item">
         <img :src="item.image" :alt="item.name" class="item-image" />
         <div class="item-details">
-          <h3 class="item-name">{{ item.name }}</h3>
-          <p class="item-price">₱ {{ item.totalPrice.toFixed(2) }}</p>
+          <div class="item-header">
+            <h3 class="item-name">{{ item.name }}</h3>
+            <button @click="removeItem(item.id)" class="remove-btn">Remove</button>
+          </div>
+          <p class="item-price">₱ {{ item.price.toFixed(2) }}</p> <!-- Fixed price per item -->
           <div class="quantity-controls">
             <button @click="decreaseQuantity(item)" class="quantity-btn">-</button>
             <span class="quantity">{{ item.quantity }}</span>
@@ -18,7 +21,6 @@
             placeholder="Special instructions (e.g., no onions, extra spicy)"
           ></textarea>
         </div>
-        <button @click="removeItem(item.id)" class="remove-btn">Remove</button>
       </div>
 
       <!-- Order Summary -->
@@ -45,7 +47,6 @@
     </div>
     <div v-else>
       <p class="empty-cart-message">Your cart is empty. Please add items to your order.</p>
-      <!-- Back to Main Menu Button -->
       <button @click="goBackToMainMenu" class="back-to-main-btn">Back to Main Menu</button>
     </div>
   </div>
@@ -56,12 +57,16 @@ export default {
   name: 'ReviewOrder',
   data() {
     return {
-      cart: [],
+      cart: [
+        // Example structure for cart items:
+        // { id: 1, name: 'Classic Chicken', quantity: 1, price: 129, totalPrice: 129, instructions: '' }
+      ],
       suggestedItems: []
     };
   },
   computed: {
     total() {
+      // Sum up the totalPrice of each item in the cart
       return this.cart.reduce((sum, item) => sum + item.totalPrice, 0);
     }
   },
@@ -73,18 +78,25 @@ export default {
     loadCart() {
       const storedCart = localStorage.getItem('cart');
       this.cart = storedCart ? JSON.parse(storedCart) : [];
+      this.updateTotalPrices();
     },
     increaseQuantity(item) {
       item.quantity += 1;
-      item.totalPrice = item.price * item.quantity;
+      item.totalPrice = item.price * item.quantity; // Calculate the new total price based on quantity
       this.saveCart();
     },
     decreaseQuantity(item) {
       if (item.quantity > 1) {
         item.quantity -= 1;
-        item.totalPrice = item.price * item.quantity;
+        item.totalPrice = item.price * item.quantity; // Calculate the new total price based on quantity
         this.saveCart();
       }
+    },
+    updateTotalPrices() {
+      // Recalculate total prices for all items in case quantities were changed
+      this.cart.forEach(item => {
+        item.totalPrice = item.price * item.quantity;
+      });
     },
     removeItem(itemId) {
       this.cart = this.cart.filter(item => item.id !== itemId);
@@ -100,12 +112,14 @@ export default {
       this.$router.push('/main-menu');
     },
     proceedToCheckout() {
+      // Save the current state of the cart in localStorage and proceed to checkout
       const updatedCart = this.cart.map(item => ({
         id: item.id,
         name: item.name,
         quantity: item.quantity,
+        price: item.price,
         totalPrice: item.totalPrice,
-        instructions: item.instructions || "" // Default to empty if no instructions provided
+        instructions: item.instructions || ""
       }));
 
       localStorage.setItem("cart", JSON.stringify(updatedCart));
@@ -128,7 +142,7 @@ export default {
 
       if (existingItemIndex !== -1) {
         this.cart[existingItemIndex].quantity += 1;
-        this.cart[existingItemIndex].totalPrice += suggestion.price;
+        this.cart[existingItemIndex].totalPrice = this.cart[existingItemIndex].price * this.cart[existingItemIndex].quantity;
       } else {
         this.cart.push({ ...suggestion, quantity: 1, totalPrice: suggestion.price });
       }
@@ -180,10 +194,28 @@ h2 {
   flex-grow: 1;
 }
 
+.item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.item-name {
+  margin-right: 20px;
+}
+
+.item-price {
+  font-size: 1em;
+  color: #888;
+  margin-top: 5px;
+  margin-bottom: 15px;
+}
+
 .quantity-controls {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 .quantity-btn {
@@ -191,15 +223,19 @@ h2 {
   color: white;
   border: none;
   border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  font-size: 0.9em;
+  width: 35px;
+  height: 35px;
+  font-size: 1.2em;
+  font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s;
+  margin: 0 5px;
 }
 
-.quantity-btn:hover {
-  background-color: #ec971f;
+.quantity {
+  font-size: 1.1em;
+  color: #333;
+  font-weight: bold;
 }
 
 .special-instructions {
@@ -301,7 +337,6 @@ h2 {
   background-color: rgba(79, 53, 38, 0.8);
 }
 
-/* Suggested Items Styling */
 .suggested-items {
   margin-top: 20px;
   padding-top: 15px;

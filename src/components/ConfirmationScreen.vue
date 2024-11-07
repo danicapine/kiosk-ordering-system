@@ -12,16 +12,39 @@
 <script>
 export default {
   name: "ConfirmationScreen",
+  data() {
+    return {
+      inactivityTimer: null,
+    };
+  },
   methods: {
     goHome() {
       this.clearPreviousTransactions(); // Clear previous transactions before going home
       this.$router.push("/");
     },
     clearPreviousTransactions() {
-      // Clear cart data in localStorage and any other relevant data
-      localStorage.removeItem("cart");
+      localStorage.removeItem("cart"); // Clear cart data in localStorage
       console.log("Previous transactions cleared.");
     },
+    startInactivityTimer() {
+      this.inactivityTimer = setTimeout(() => {
+        this.goHome();
+      }, 5000); // Redirect to home after 5 seconds of inactivity
+    },
+    resetInactivityTimer() {
+      if (this.inactivityTimer) {
+        clearTimeout(this.inactivityTimer);
+      }
+      this.startInactivityTimer();
+    },
+  },
+  mounted() {
+    this.startInactivityTimer(); // Start timer when component is mounted
+  },
+  beforeUnmount() {
+    if (this.inactivityTimer) {
+      clearTimeout(this.inactivityTimer); // Clear timer when component is destroyed
+    }
   },
 };
 </script>
@@ -69,7 +92,7 @@ export default {
 .back-btn {
   margin-top: 20px;
   padding: 10px 20px;
-  background-color: #5bc0de;
+  background-color: rgba(79, 53, 38, 1);
   color: #fff;
   border: none;
   border-radius: 4px;
@@ -78,6 +101,6 @@ export default {
 }
 
 .back-btn:hover {
-  background-color: #31b0d5;
+  background-color: rgba(79, 53, 38, 0.8);
 }
 </style>

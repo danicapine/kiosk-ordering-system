@@ -45,6 +45,8 @@
     </div>
     <div v-else>
       <p class="empty-cart-message">Your cart is empty. Please add items to your order.</p>
+      <!-- Back to Main Menu Button -->
+      <button @click="goBackToMainMenu" class="back-to-main-btn">Back to Main Menu</button>
     </div>
   </div>
 </template>
@@ -94,8 +96,10 @@ export default {
     goBack() {
       this.$router.push('/main-menu');
     },
+    goBackToMainMenu() {
+      this.$router.push('/main-menu');
+    },
     proceedToCheckout() {
-      // Ensure that instructions are saved with each item
       const updatedCart = this.cart.map(item => ({
         id: item.id,
         name: item.name,
@@ -104,10 +108,7 @@ export default {
         instructions: item.instructions || "" // Default to empty if no instructions provided
       }));
 
-      // Store the updated cart with instructions in local storage
       localStorage.setItem("cart", JSON.stringify(updatedCart));
-
-      // Redirect to Payment Options page
       this.$router.push('/payment-options');
     },
     generateSuggestedItems() {
@@ -138,7 +139,6 @@ export default {
 };
 </script>
 
-
 <style scoped>
 .review-order {
   max-width: 800px;
@@ -147,7 +147,7 @@ export default {
   background-color: #f9f9f9;
   border-radius: 8px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-  font-size: 1.2em; /* Standardized font size */
+  font-size: 1.2em;
 }
 
 h2 {
@@ -180,28 +180,10 @@ h2 {
   flex-grow: 1;
 }
 
-.item-name {
-  font-size: 1em; /* Slightly larger font for product name */
-  color: #333;
-  margin: 0;
-}
-
-.item-price {
-  font-size: 0.9em; /* Standardized font size for price */
-  color: #666;
-  margin: 5px 0 10px 0;
-}
-
 .quantity-controls {
   display: flex;
   align-items: center;
   margin-bottom: 10px;
-}
-
-.quantity {
-  margin: 0 10px;
-  font-size: 0.9em; /* Standardized font size */
-  color: #333;
 }
 
 .quantity-btn {
@@ -211,7 +193,7 @@ h2 {
   border-radius: 50%;
   width: 30px;
   height: 30px;
-  font-size: 0.9em; /* Standardized font size */
+  font-size: 0.9em;
   cursor: pointer;
   transition: background-color 0.3s;
 }
@@ -224,7 +206,7 @@ h2 {
   width: 100%;
   margin-top: 10px;
   padding: 8px;
-  font-size: 0.8em; /* Standardized font size */
+  font-size: 0.8em;
   border-radius: 4px;
   border: 1px solid #ddd;
   resize: vertical;
@@ -237,7 +219,7 @@ h2 {
   border: none;
   border-radius: 4px;
   padding: 6px 10px;
-  font-size: 0.9em; /* Standardized font size */
+  font-size: 0.9em;
   cursor: pointer;
   transition: background-color 0.3s;
 }
@@ -254,7 +236,7 @@ h2 {
 }
 
 .total-text {
-  font-size: 1.2em; /* Slightly larger for emphasis */
+  font-size: 1.2em;
   color: #333;
   margin-bottom: 15px;
 }
@@ -270,7 +252,7 @@ h2 {
   border: none;
   border-radius: 4px;
   padding: 10px 15px;
-  font-size: 0.9em; /* Standardized font size */
+  font-size: 0.9em;
   cursor: pointer;
   transition: background-color 0.3s;
 }
@@ -285,7 +267,7 @@ h2 {
   border: none;
   border-radius: 4px;
   padding: 10px 15px;
-  font-size: 0.9em; /* Standardized font size */
+  font-size: 0.9em;
   cursor: pointer;
   transition: background-color 0.3s;
 }
@@ -296,9 +278,27 @@ h2 {
 
 .empty-cart-message {
   text-align: center;
-  font-size: 0.9em; /* Standardized font size */
+  font-size: 0.9em;
   color: #777;
   margin-top: 30px;
+}
+
+.back-to-main-btn {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  background-color: rgba(79, 53, 38, 1);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1em;
+  text-align: center;
+  transition: background-color 0.3s;
+}
+
+.back-to-main-btn:hover {
+  background-color: rgba(79, 53, 38, 0.8);
 }
 
 /* Suggested Items Styling */
@@ -312,7 +312,7 @@ h2 {
   display: flex;
   align-items: center;
   margin-bottom: 8px;
-  font-size: 1em; /* Standardized font size */
+  font-size: 1em;
 }
 
 .suggested-image {
@@ -328,13 +328,13 @@ h2 {
 }
 
 .suggestion-details h4 {
-  font-size: 1em; /* Slightly larger font for suggested item names */
+  font-size: 1em;
   margin: 0;
   color: #333;
 }
 
 .suggestion-details p {
-  font-size: 0.9em; /* Standardized font size for price */
+  font-size: 0.9em;
   margin: 2px 0;
   color: #666;
 }
@@ -345,7 +345,7 @@ h2 {
   border: none;
   border-radius: 4px;
   padding: 5px 8px;
-  font-size: 0.9em; /* Standardized font size */
+  font-size: 0.9em;
   cursor: pointer;
 }
 </style>

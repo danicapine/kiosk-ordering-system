@@ -4,7 +4,7 @@
     <div class="content">
       <p class="small-text">Fast & Easy</p>
       <h1 class="large-text">
-        <span class="bordered-text">Order<br />& pay<br />here</span>
+        <span class="highlighted-text">Order<br />& pay<br />here</span>
       </h1>
       <div class="touch-icon">
         <!-- Touchscreen Gesture Icon -->
@@ -84,16 +84,26 @@ export default {
   line-height: 1.2;
 }
 
-.bordered-text {
-  border: 3px solid black;
-  padding: 10px;
+.highlighted-text {
+  padding: 15px 20px;
   display: inline-block;
+  background-color: rgba(255, 255, 255, 0.1); /* Light semi-transparent background */
+  border: 2px solid white; /* Subtle border for contrast */
+  border-radius: 15px; /* Rounded corners for a soft look */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Subtle shadow for depth */
+  font-weight: bold;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.highlighted-text:hover {
+  background-color: rgba(255, 255, 255, 0.2); /* Slightly darker on hover */
+  transform: scale(1.05); /* Subtle scale effect */
 }
 
 .touch-icon {
   font-size: 1em;
   margin-top: 10px;
-  display:block;
+  display: block;
   align-items: center;
   justify-content: center;
   animation: pulse 1.5s infinite;
@@ -118,7 +128,8 @@ export default {
   border: none;
   cursor: pointer;
   z-index: 2;
-  animation: buttonPulse 1.5s infinite; /* Apply pulsing animation */
+  animation: buttonPulse 1.5s infinite;
+  border-radius: 10px;
 }
 
 @keyframes buttonPulse {
@@ -131,7 +142,6 @@ export default {
   background-color: rgba(79, 53, 38, 1);
 }
 
-
 .icon {
   margin-right: 10px;
   display: flex;
@@ -143,17 +153,26 @@ export default {
 }
 
 /* Media Queries */
-@media (max-width: 768px) {
-  .small-text { font-size: 1.5em; }
-  .large-text { font-size: 4em; }
-  .touch-icon { font-size: 2.5em; }
-  .start-button { padding: 15px; font-size: 1.2em; }
+@media (max-width: 1024px) { /* Tablet Landscape */
+  .small-text { font-size: 1.8em; }
+  .large-text { font-size: 4.5em; }
+  .highlighted-text { padding: 12px 18px; }
+  .start-button { padding: 18px; font-size: 1.8em; }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 768px) { /* Tablet Portrait */
+  .small-text { font-size: 1.6em; }
+  .large-text { font-size: 4em; }
+  .highlighted-text { padding: 10px 16px; }
+  .touch-icon { font-size: 2.5em; }
+  .start-button { padding: 15px; font-size: 1.6em; }
+}
+
+@media (max-width: 480px) { /* Mobile */
   .small-text { font-size: 1.2em; }
   .large-text { font-size: 3.5em; }
+  .highlighted-text { padding: 8px 12px; }
   .touch-icon { font-size: 2em; }
-  .start-button { padding: 10px; font-size: 1em; }
+  .start-button { padding: 10px; font-size: 1.4em; }
 }
 </style>

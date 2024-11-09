@@ -3,12 +3,13 @@ import Router from 'vue-router';
 import KioskHome from '../components/KioskHome.vue'; // Home screen for the kiosk
 import SecondPage from '../components/SecondPage.vue'; // Additional page component
 import MainMenu from '../components/MainMenu.vue'; // Main menu where items are selected
-import AdminOrders from '../components/AdminOrders.vue'; // Admin page for viewing orders
+import AdminOrders from '../components/CustomerOrder.vue'; // Admin page for viewing orders
 import OrderQueue from '@/components/QueuePage.vue';
 import ReviewOrder from '@/components/ReviewOrder.vue';
 import PaymentOptions from '@/components/PaymentOptions.vue'; // New payment options component
 import OrderModeOptions from '@/components/OrderModeOptions.vue';
 import ConfirmationScreen from "@/components/ConfirmationScreen.vue";
+import AdminDash from '@/components/AdminDash.vue';
 /*import CashlessPayment from '@/components/CashlessPayment.vue'; // New cashless payment component
 import CashPayment from '@/components/CashPayment.vue'; // New cash payment component*/
 
@@ -62,6 +63,11 @@ export default new Router({
       name: "ConfirmationScreen",
       component: ConfirmationScreen,
       props: route => ({ orderNumber: route.params.orderNumber })
+    },
+    {
+      path: '/admin-dash',
+      name: 'AdminDash',
+      component: AdminDash,
     },
     /*{
       path: '/cashless-payment', // New route for the Cashless Payment page

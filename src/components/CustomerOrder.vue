@@ -1,10 +1,8 @@
 <template>
   <div class="container admin-page">
-    <h1 class="text-center my-4">Admin Dashboard</h1>
 
     <!-- Section to View Orders -->
     <section class="orders-section mb-5">
-      <h2 class="mb-3">Customer Orders</h2>
       <div v-if="orders.length > 0">
         <table class="table table-striped table-bordered">
           <thead>

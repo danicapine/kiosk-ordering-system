@@ -1,6 +1,6 @@
-// Import the Firebase modules you need
-import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore"; // Import Firestore
+// Import necessary Firebase modules
+import { initializeApp, getApps, getApp } from "firebase/app"; // To initialize Firebase
+import { getFirestore } from "firebase/firestore"; // To initialize Firestore
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -13,10 +13,11 @@ const firebaseConfig = {
   measurementId: "G-S4P0PGT0B8" // Optional
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// Initialize Firebase app only if it hasn't been initialized already
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
 // Initialize Firestore
 const db = getFirestore(app);
 
+// Export the Firestore instance for use in other parts of your app
 export { db };

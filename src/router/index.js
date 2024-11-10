@@ -1,22 +1,23 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import KioskHome from '../components/KioskHome.vue'; // Home screen for the kiosk
-import SecondPage from '../components/SecondPage.vue'; // Additional page component
-import MainMenu from '../components/MainMenu.vue'; // Main menu where items are selected
-import AdminOrders from '../components/CustomerOrder.vue'; // Admin page for viewing orders
+import KioskHome from '../components/KioskHome.vue';
+import SecondPage from '../components/SecondPage.vue';
+import MainMenu from '../components/MainMenu.vue';
+import AdminOrders from '../components/CustomerOrder.vue';
 import OrderQueue from '@/components/QueuePage.vue';
 import ReviewOrder from '@/components/ReviewOrder.vue';
-import PaymentOptions from '@/components/PaymentOptions.vue'; // New payment options component
+import PaymentOptions from '@/components/PaymentOptions.vue';
 import OrderModeOptions from '@/components/OrderModeOptions.vue';
 import ConfirmationScreen from "@/components/ConfirmationScreen.vue";
 import AdminDash from '@/components/AdminDash.vue';
-/*import CashlessPayment from '@/components/CashlessPayment.vue'; // New cashless payment component
-import CashPayment from '@/components/CashPayment.vue'; // New cash payment component*/
+import AdminMenu from '@/components/AdminMenu.vue';
+/*import CashlessPayment from '@/components/CashlessPayment.vue';
+import CashPayment from '@/components/CashPayment.vue';*/
 
 Vue.use(Router);
 
 export default new Router({
-  mode: 'history', // Optional: use history mode to remove the hash (#) from the URL
+  mode: 'history', // Use history mode to remove the hash (#) from the URL
   routes: [
     {
       path: '/',
@@ -29,27 +30,27 @@ export default new Router({
       component: SecondPage,
     },
     {
-      path: '/main-menu', // Route for the Main Menu
+      path: '/main-menu',
       name: 'MainMenu',
       component: MainMenu,
     },
     {
-      path: '/admin', // Route for the Admin Page
+      path: '/admin',
       name: 'AdminOrders',
       component: AdminOrders,
     },
     {
-      path: '/queue', // Route for the Order Queue
+      path: '/queue',
       name: 'OrderQueue',
       component: OrderQueue,
     },
     {
-      path: '/review-order', // Route for the Review Order Page
+      path: '/review-order',
       name: 'ReviewOrder',
       component: ReviewOrder,
     },
     {
-      path: '/payment-options', // New route for the Payment Options page
+      path: '/payment-options',
       name: 'PaymentOptions',
       component: PaymentOptions,
     },
@@ -62,20 +63,26 @@ export default new Router({
       path: "/confirmation",
       name: "ConfirmationScreen",
       component: ConfirmationScreen,
-      props: route => ({ orderNumber: route.params.orderNumber })
+      props: route => ({ orderNumber: route.params.orderNumber }), // Pass orderNumber as prop
     },
     {
       path: '/admin-dash',
       name: 'AdminDash',
       component: AdminDash,
     },
-    /*{
-      path: '/cashless-payment', // New route for the Cashless Payment page
+    {
+      path: '/admin-menu',
+      name: 'AdminMenu',
+      component: AdminMenu,
+    },
+    /* Uncomment if needed in the future
+    {
+      path: '/cashless-payment',
       name: 'CashlessPayment',
       component: CashlessPayment,
     },
     {
-      path: '/cash-payment', // New route for the Cash Payment page
+      path: '/cash-payment',
       name: 'CashPayment',
       component: CashPayment,
     },*/

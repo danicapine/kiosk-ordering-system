@@ -75,40 +75,22 @@
 </template>
 
 <script>
+import { onSnapshot, collection } from "firebase/firestore";
+import { db } from "../config/firebaseConfig";
+
 export default {
   name: 'MainMenu',
   data() {
     return {
       categories: [
         { name: 'All', image: require('@/assets/all.png') },
-        { name: 'Rice', image: require('@/assets/rice.png') },
-        { name: 'Chicken', image: require('@/assets/chicken.png') },
+        { name: 'Rice', image: require('@/assets/ricemeal.png') },
+        { name: 'Chicken', image: require('@/assets/flavored.png') },
         { name: 'Burgers', image: require('@/assets/burgers.png') },
         { name: 'Pasta', image: require('@/assets/pasta.png') },
       ],
       selectedCategory: 'All',
-      foods: [
-        { id: 1, name: 'Crispy Chicken', category: 'Rice', price: 149, image: require('@/assets/crispy.png') },
-        { id: 2, name: 'Burger Steak', category: 'Rice', price: 129, image: require('@/assets/burgersteak.png') },
-        { id: 3, name: 'Fried Liempo', category: 'Rice', price: 139, image: require('@/assets/friedliempo.png') },
-        { id: 4, name: 'Buttered Squid', category: 'Rice', price: 129, image: require('@/assets/buttered.png') },
-        { id: 5, name: 'Fried Bangus', category: 'Rice', price: 139, image: require('@/assets/friedbangus.png') },
-        { id: 6, name: 'Buffalo Shrimp', category: 'Rice', price: 139, image: require('@/assets/shrimp.png') },
-        { id: 7, name: 'Pork Adobo', category: 'Rice', price: 139, image: require('@/assets/adobo.png') },
-        { id: 8, name: 'Beef Tapa', category: 'Rice', price: 139, image: require('@/assets/tapa.png') },
-        { id: 9, name: 'Parmesan Chicken', category: 'Chicken', price: 129, image: require('@/assets/parmesan.png') },
-        { id: 10, name: 'Sweet Chilli Chicken', category: 'Chicken', price: 129, image: require('@/assets/sweetchilli.png') },
-        { id: 11, name: 'Buffalo Chicken', category: 'Chicken', price: 129, image: require('@/assets/buffalo.png') },
-        { id: 12, name: 'Classic Chicken', category: 'Chicken', price: 129, image: require('@/assets/classic.png') },
-        { id: 13, name: 'Overload', category: 'Burgers', price: 149, image: require('@/assets/overload.png') },
-        { id: 14, name: 'Chicken Fillet', category: 'Burgers', price: 125, image: require('@/assets/chickenfillet.png') },
-        { id: 15, name: 'Bacon', category: 'Burgers', price: 130, image: require('@/assets/bacon.png') },
-        { id: 16, name: 'Onion', category: 'Burgers', price: 130, image: require('@/assets/onion.png') },
-        { id: 17, name: 'Spaghetti', category: 'Pasta', price: 125, image: require('@/assets/spaghetti.png') },
-        { id: 18, name: 'Shrimp Pasta', category: 'Pasta', price: 125, image: require('@/assets/shrimppasta.png') },
-        { id: 19, name: 'Seafood Pasta', category: 'Pasta', price: 125, image: require('@/assets/seafoodpasta.png') },
-        { id: 20, name: 'Carbonara', category: 'Pasta', price: 125, image: require('@/assets/carbonara.png') },
-      ],
+      foods: [],
       filteredFoods: [],
       selectedFood: null,
       quantity: 1,
@@ -116,22 +98,30 @@ export default {
     };
   },
   created() {
-    this.filteredFoods = this.foods;
+    this.fetchMenuItems();
   },
   methods: {
+    fetchMenuItems() {
+      const menuRef = collection(db, "menu");
+      onSnapshot(menuRef, (snapshot) => {
+        this.foods = snapshot.docs
+          .map((doc) => ({ id: doc.id, ...doc.data() }))
+          .filter((food) => food.isAvailable); // Only show available items
+        this.filterFoods(); // Update the displayed items based on current filters
+      });
+    },
     filterByCategory(category) {
       this.selectedCategory = category;
-      this.selectedFood = null;
       this.filterFoods();
     },
     filterFoods() {
-      const query = this.searchQuery.toLowerCase();
-      this.filteredFoods = this.foods.filter(food => {
-        const matchesCategory = this.selectedCategory === 'All' || food.category === this.selectedCategory;
-        const matchesSearch = food.name.toLowerCase().includes(query);
-        return matchesCategory && matchesSearch;
-      });
-    },
+  const query = this.searchQuery ? this.searchQuery.toLowerCase() : ''; // Ensure searchQuery is a string
+  this.filteredFoods = this.foods.filter(food => {
+    const matchesCategory = this.selectedCategory === 'All' || food.category === this.selectedCategory;
+    const matchesSearch = food.name && food.name.toLowerCase().startsWith(query); // Check if food.name starts with query
+    return matchesCategory && matchesSearch;
+  });
+},
     openFoodModal(food) {
       this.selectedFood = food;
       this.quantity = 1;
@@ -168,7 +158,6 @@ export default {
         }
 
         localStorage.setItem('cart', JSON.stringify(cart));
-
         this.closeFoodModal();
         this.$router.push('/review-order'); // Redirect to Review Order page
       }
@@ -178,111 +167,175 @@ export default {
 </script>
 
 <style scoped>
-/* Same styles as before */
-</style>
-
-<style scoped>
-.main-menu {
-  display: flex;
-  height: 100vh;
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
-/* Sidebar and Main Menu Content CSS */
+.main-menu {
+  display: flex;
+  min-height: 100vh;
+  color: rgba(79, 53, 38, 1);
+  font-size: larger;
+  background-image: url('@/assets/bg.png'); /* Path to your background image */
+  background-size: cover;
+  background-position: center;
+  padding-left: 90px; /* Add padding to offset sidebar width */
+  position: relative;
+}
+
 .sidebar {
-  width: 80px;
-  background-color: #f4f4f4;
+  width: 95px;
+  background-color: rgba(75, 50, 37, 0.9); /* Dark brown with slight opacity */
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 10px;
+  padding: 10px; /* Reduced padding */
+  border-radius: 12px 0 0 12px; /* Rounded corners */
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3); /* Shadow for depth */
+  position: fixed; /* Fixed positioning for better alignment */
+  height: 100vh;
+  top: 0;
+  left: 0;
+  z-index: 1; /* Ensures it sits behind other main content */
 }
+
 .logo-container {
-  margin-bottom: 10px;
+  margin-bottom: 15px; /* Slightly smaller margin */
   text-align: center;
+  background-color: whitesmoke;/* Light background for visibility */
+  padding: 5px; /* Padding around the logo */
+  border-radius: 8px; /* Rounded corners */
 }
+
 .logo-image {
-  width: 120px;
-  height: 120px;
+  width: 70px; /* Adjusted size */
+  height: 70px;
   object-fit: contain;
   border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Soft shadow for visibility */
 }
+
 .sidebar-item {
-  margin: 10px 0;
+  margin: 15px 0;
   cursor: pointer;
   width: 60px;
   height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid transparent;
   border-radius: 8px;
-  transition: border-color 0.3s;
-}
-.sidebar-item.active {
-  border-color: rgba(79, 53, 38, 0.8);
-}
-.sidebar-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 8px;
+  transition: background-color 0.3s, transform 0.2s, width 0.3s, height 0.3s;
 }
 
-/* Food Items and Modal CSS */
+.sidebar-item:hover {
+  background-color: rgba(255, 204, 0, 0.3); /* Subtle highlight on hover */
+}
+
+.sidebar-item.active {
+  background-color: rgba(255, 204, 0, 0.8); /* Brighter background for active category */
+  border: 3px solid #ffcc00; /* Thicker golden border */
+  width: 70px; /* Increase width */
+  height: 70px; /* Increase height */
+  transform: scale(1.1); /* Slightly larger to indicate active state */
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3); /* Stronger shadow for emphasis */
+}
+
+.sidebar-image {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  border-radius: 4px;
+  transition: transform 0.3s ease; /* Smooth transition for scaling */
+}
+
+.sidebar-item:hover .sidebar-image,
+.sidebar-item.active .sidebar-image {
+  transform: scale(1.2); /* Enlarge image on hover and active state */
+}
 .menu-content {
   flex-grow: 1;
   padding: 20px;
+  border-radius: 8px;
+  z-index: 2; /* Ensure it sits above the sidebar */
 }
+
 .search-bar {
   margin-bottom: 10px;
 }
+
 .search-input {
   width: 100%;
   padding: 10px;
   font-size: 1em;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  border: 2px solid #ffffff; /* White border for visibility */
+  border-radius: 6px;
+  background-color: rgba(255, 255, 255, 0.2); /* Light white background for better contrast */
+  color: #ffffff; /* White text color */
+  outline: none; /* Remove the default outline */
 }
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.7); /* Light white color for placeholder text */
+}
+
 .food-items {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 25px;
   justify-items: center;
 }
+
 .food-item {
-  background-color: white;
-  border: 1px solid black;
-  border-radius: 8px;
+  background-color: rgba(75, 50, 37, 0.8); /* Brown with 80% opacity */
+  border: 1px solid rgba(79, 53, 38, 0.5); /* Light brown border with transparency */
+  border-radius: 12px;
   width: 250px;
   height: 350px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 10px;
+  justify-content: flex-start;
+  padding: 15px;
   text-align: center;
   cursor: pointer;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
+
+.food-item:hover {
+  transform: scale(1.03);
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+}
+
 .food-image {
   width: 100%;
-  height: 60%;
+  height: 200px;
   object-fit: cover;
   border-radius: 8px;
+  margin-bottom: 10px;
 }
+
 .food-details {
-  margin-top: 5px;
+  margin-top: 10px;
 }
+
 .food-name {
-  font-weight: bold;
+  font-weight: 600;
+  font-size: 1.1em;
+  color: #fff; /* White text for contrast */
+  margin-bottom: 8px;
 }
+
 .food-price-container {
   margin-top: 5px;
 }
-.food-price {
-  color: #888;
-}
 
-/* Modal CSS */
+.food-price {
+  font-weight: bold;
+  color: #d4af37; /* Gold color for price */
+}
 .food-modal-overlay {
   position: fixed;
   top: 0;
@@ -293,14 +346,30 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 9999; /* High z-index to ensure it stays on top */
 }
+
 .food-modal {
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  width: 300px;
+  background-color: whitesmoke;
+  padding: 40px; /* Increased padding for a larger appearance */
+  border-radius: 12px;
+  width: 350px; /* Increased width */
+  max-width: 90%; /* Ensures responsiveness on smaller screens */
+  height: auto; /* Let the content define the height */
+  text-align: center;
+  z-index: 10000; /* Even higher to ensure it appears above the overlay */
+}
+
+.food-modal {
+  background-color:whitesmoke;
+  padding: 40px; /* Increased padding for a larger appearance */
+  border-radius: 12px;
+  width: 350px; /* Increased width */
+  max-width: 90%; /* Ensures responsiveness on smaller screens */
+  height: auto; /* Let the content define the height */
   text-align: center;
 }
+
 .image-container {
   display: flex;
   align-items: center;
@@ -309,50 +378,59 @@ export default {
   width: 100%;
   height: 200px;
 }
+
 .modal-food-image {
   max-width: 100%;
   max-height: 100%;
   object-fit: cover;
   border-radius: 8px;
 }
+
 .modal-quantity {
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 10px 0;
 }
+
 .quantity-btn {
-  width: 30px;
-  height: 30px;
+  width: 50px;
+  height: 50px;
   font-size: 1.2em;
   background-color: #ffcc00;
   border: none;
   cursor: pointer;
   margin: 0 5px;
 }
+
 .quantity {
   font-size: 1.2em;
 }
+
 .modal-actions {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-.add-to-order-btn {
-  padding: 8px 16px;
-  background-color: #ffcc00;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-top: 10px;
-}
+
+.add-to-order-btn,
 .cancel-btn {
-  margin-top: 10px;
-  padding: 8px 16px;
+  width: 100%; /* Full width to match the image container */
+  padding: 12px 0; /* Increased padding for height */
+  border: none;
+  border-radius: 6px; /* Slightly rounded corners */
+  cursor: pointer;
+  font-size: 1.1em; /* Larger font size for readability */
+  margin-top: 15px; /* More space above */
+  text-align: center;
+}
+
+.add-to-order-btn {
+  background-color: #ffcc00;
+}
+
+.cancel-btn {
   background-color: red;
   color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
 }
 </style>

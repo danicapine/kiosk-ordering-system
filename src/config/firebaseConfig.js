@@ -15,8 +15,6 @@ const firebaseConfig = {
 
 // Initialize Firebase app only if it hasn't been initialized already
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-
-// Initialize Firestore
 const db = getFirestore(app);
 
 // Export the Firestore instance for use in other parts of your app

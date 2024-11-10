@@ -2,14 +2,14 @@
   <div class="review-order">
     <h2>Review My Order</h2>
     <div v-if="cart.length > 0">
-      <div v-for="item in cart" :key="item.id" class="order-item">
+      <div v-for="item in cart" :key="item.uniqueId" class="order-item">
         <img :src="item.image" :alt="item.name" class="item-image" />
         <div class="item-details">
           <div class="item-header">
             <h3 class="item-name">{{ item.name }}</h3>
-            <button @click="removeItem(item.id)" class="remove-btn">Remove</button>
+            <button @click="removeItem(item.uniqueId)" class="remove-btn">Remove</button>
           </div>
-          <p class="item-price">₱ {{ item.price.toFixed(2) }}</p> <!-- Fixed price per item -->
+          <p class="item-price">₱ {{ item.price.toFixed(2) }}</p>
           <div class="quantity-controls">
             <button @click="decreaseQuantity(item)" class="quantity-btn">-</button>
             <span class="quantity">{{ item.quantity }}</span>
@@ -57,10 +57,7 @@ export default {
   name: 'ReviewOrder',
   data() {
     return {
-      cart: [
-        // Example structure for cart items:
-        // { id: 1, name: 'Classic Chicken', quantity: 1, price: 129, totalPrice: 129, instructions: '' }
-      ],
+      cart: [],
       suggestedItems: []
     };
   },
@@ -98,8 +95,8 @@ export default {
         item.totalPrice = item.price * item.quantity;
       });
     },
-    removeItem(itemId) {
-      this.cart = this.cart.filter(item => item.id !== itemId);
+    removeItem(uniqueId) {
+      this.cart = this.cart.filter(item => item.uniqueId !== uniqueId);
       this.saveCart();
     },
     saveCart() {
@@ -119,7 +116,8 @@ export default {
         quantity: item.quantity,
         price: item.price,
         totalPrice: item.totalPrice,
-        instructions: item.instructions || ""
+        instructions: item.instructions || "",
+        uniqueId: item.uniqueId // Make sure to store uniqueId
       }));
 
       localStorage.setItem("cart", JSON.stringify(updatedCart));
@@ -138,22 +136,34 @@ export default {
       });
     },
     addSuggestedItem(suggestion) {
-      const existingItemIndex = this.cart.findIndex(item => item.id === suggestion.id);
+      // Create a new item object with a truly unique identifier
+      const newItem = {
+        ...JSON.parse(JSON.stringify(suggestion)), // Deep clone to avoid reference issues
+        quantity: 1,
+        totalPrice: suggestion.price,
+        uniqueId: Date.now() + Math.random() // Truly unique identifier
+      };
 
-      if (existingItemIndex !== -1) {
-        this.cart[existingItemIndex].quantity += 1;
-        this.cart[existingItemIndex].totalPrice = this.cart[existingItemIndex].price * this.cart[existingItemIndex].quantity;
-      } else {
-        this.cart.push({ ...suggestion, quantity: 1, totalPrice: suggestion.price });
-      }
+      // Push the new item to the cart
+      this.cart.push(newItem);
 
+      // Save to localStorage
       this.saveCart();
+
+      // Debug logs to verify
+      console.log("New item added:", newItem);
+      console.log("Cart after adding:", JSON.parse(JSON.stringify(this.cart)));
     }
   }
 };
 </script>
 
 <style scoped>
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
 .review-order {
   max-width: 800px;
   margin: 0 auto;

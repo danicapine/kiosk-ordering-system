@@ -55,79 +55,58 @@
           </table>
         </div>
 
+        <!-- Orders Section -->
         <div v-if="activeSection === 'orders'" class="orders">
           <CustomerOrder @markReady="updateOrderStatus" />
         </div>
 
+        <!-- Menu Management Section -->
         <div v-if="activeSection === 'menu'" class="menu">
-          <h2 class="mb-3">Recent Menu Items</h2>
-          <table class="table table-striped">
-            <thead class="thead-light">
-              <tr>
-                <th>ID</th>
-                <th>Image</th>
-                <th>Name</th>
-                <th>Category</th>
-                <th>Price</th>
-                <th>Available?</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(product, index) in products" :key="index">
-                <td>{{ product.id }}</td>
-                <td><img :src="product.image" alt="Product Image" class="product-image" /></td>
-                <td>{{ product.name }}</td>
-                <td>{{ product.category }}</td>
-                <td>₱{{ product.price.toFixed(2) }}</td>
-                <td><span class="badge badge-success">Available</span></td>
-              </tr>
-            </tbody>
-          </table>
+          <AdminMenu /> <!-- Corrected to AdminMenu -->
         </div>
       </div>
     </div>
   </div>
 </template>
 
-
 <script>
-import CustomerOrder from '@/components/CustomerOrder.vue';
-import { db } from '../config/firebaseConfig';
-import { startOfDay, endOfDay } from 'date-fns';
-import { collection, query, where, addDoc, onSnapshot, doc, updateDoc } from 'firebase/firestore';
+import CustomerOrder from "@/components/CustomerOrder.vue";
+import AdminMenu from "@/components/AdminMenu.vue"; // Using AdminMenu instead of Menu
+import { db } from "../config/firebaseConfig";
+import { startOfDay, endOfDay, startOfMonth, endOfMonth, startOfYear, endOfYear } from "date-fns";
+import { collection, query, where, addDoc, onSnapshot, doc, updateDoc } from "firebase/firestore";
 
 export default {
   components: {
     CustomerOrder,
+    AdminMenu, // Updated to AdminMenu
   },
   data() {
     return {
-      activeSection: 'dashboard',
+      activeSection: "dashboard",
       isToggled: false,
       dailySales: 0,
       monthlySales: 0,
       yearlySales: 0,
       previousDailySales: [],
-      products: [
-        // Your product data
-      ],
+      products: [], // Products will be populated in AdminMenu component
     };
   },
   computed: {
     getSectionTitle() {
       switch (this.activeSection) {
-        case 'dashboard':
-          return 'Overview';
-        case 'categories':
-          return 'Categories';
-        case 'menu':
-          return 'Menu';
-        case 'orders':
-          return 'Customer Orders';
-        case 'users':
-          return 'Users';
+        case "dashboard":
+          return "Overview";
+        case "categories":
+          return "Categories";
+        case "menu":
+          return "Menu Management";
+        case "orders":
+          return "Customer Orders";
+        case "users":
+          return "Users";
         default:
-          return 'Overview';
+          return "Overview";
       }
     },
   },
@@ -140,10 +119,10 @@ export default {
       const todayEnd = endOfDay(new Date());
 
       const q = query(
-        collection(db, 'sales'),
-        where('saleDate', '>=', todayStart),
-        where('saleDate', '<=', todayEnd),
-        where('status', '==', 'Ready')
+        collection(db, "sales"),
+        where("saleDate", ">=", todayStart),
+        where("saleDate", "<=", todayEnd),
+        where("status", "==", "Ready")
       );
 
       onSnapshot(q, (snapshot) => {
@@ -153,25 +132,61 @@ export default {
         }, 0);
       });
     },
+    async calculateMonthlySales() {
+      const monthStart = startOfMonth(new Date());
+      const monthEnd = endOfMonth(new Date());
+
+      const q = query(
+        collection(db, "sales"),
+        where("saleDate", ">=", monthStart),
+        where("saleDate", "<=", monthEnd),
+        where("status", "==", "Ready")
+      );
+
+      onSnapshot(q, (snapshot) => {
+        this.monthlySales = snapshot.docs.reduce((total, doc) => {
+          const sale = doc.data();
+          return total + (sale.total || 0);
+        }, 0);
+      });
+    },
+    async calculateYearlySales() {
+      const yearStart = startOfYear(new Date());
+      const yearEnd = endOfYear(new Date());
+
+      const q = query(
+        collection(db, "sales"),
+        where("saleDate", ">=", yearStart),
+        where("saleDate", "<=", yearEnd),
+        where("status", "==", "Ready")
+      );
+
+      onSnapshot(q, (snapshot) => {
+        this.yearlySales = snapshot.docs.reduce((total, doc) => {
+          const sale = doc.data();
+          return total + (sale.total || 0);
+        }, 0);
+      });
+    },
     async saveDailySalesAndReset() {
       if (this.dailySales > 0) {
         try {
-          await addDoc(collection(db, 'dailySalesHistory'), {
+          await addDoc(collection(db, "dailySalesHistory"), {
             date: new Date(),
             totalSales: this.dailySales,
           });
           this.dailySales = 0;
         } catch (error) {
-          console.error('Error saving daily sales:', error);
+          console.error("Error saving daily sales:", error);
         }
       }
     },
     async updateOrderStatus(orderId) {
       try {
-        const orderRef = doc(db, 'sales', orderId);
-        await updateDoc(orderRef, { status: 'Ready' });
+        const orderRef = doc(db, "sales", orderId);
+        await updateDoc(orderRef, { status: "Ready" });
       } catch (error) {
-        console.error('Error updating order status:', error);
+        console.error("Error updating order status:", error);
       }
     },
     formatDate(date) {
@@ -191,6 +206,8 @@ export default {
   },
   async mounted() {
     await this.calculateDailySales();
+    await this.calculateMonthlySales();
+    await this.calculateYearlySales();
     this.scheduleDailyReset();
   },
   beforeUnmount() {

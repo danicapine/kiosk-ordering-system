@@ -1,5 +1,16 @@
 <template>
   <div class="admin-menu">
+    <!-- Search Bar for Products -->
+    <div class="search-bar">
+      <input
+        type="text"
+        v-model="searchQuery"
+        placeholder="Search for product name..."
+        class="search-input"
+        @input="filterProducts"
+      />
+    </div>
+
     <button @click="showAddProductModal" class="add-product-button">Add Product</button>
 
     <!-- Add/Edit Product Modal -->
@@ -57,7 +68,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="product in products" :key="product.id">
+        <tr v-for="product in filteredProducts" :key="product.id">
           <td>{{ product.id }}</td>
           <td><img :src="product.image" alt="Product Image" v-if="product.image" class="product-image" /></td>
           <td>{{ product.name }}</td>
@@ -88,12 +99,14 @@ export default {
       isModalOpen: false,
       editMode: false,
       products: [],
+      filteredProducts: [],
+      searchQuery: "", // Added search query
       newProduct: {
         name: "",
         category: "",
         price: 0,
         isAvailable: true,
-        image: null, // Initially null until image is uploaded
+        image: null,
       },
     };
   },
@@ -102,12 +115,19 @@ export default {
       try {
         const querySnapshot = await getDocs(collection(db, "menu"));
         this.products = querySnapshot.docs.map((doc) => ({
-          id: doc.id, // Firestore-generated ID
+          id: doc.id,
           ...doc.data(),
         }));
+        this.filteredProducts = this.products; // Initialize filtered products
       } catch (error) {
         console.error("Error fetching products:", error);
       }
+    },
+    filterProducts() {
+      const query = this.searchQuery.toLowerCase();
+      this.filteredProducts = this.products.filter(product =>
+        product.name.toLowerCase().includes(query)
+      );
     },
     showAddProductModal() {
       this.resetNewProduct();
@@ -145,24 +165,22 @@ export default {
     },
     async addProduct() {
       try {
-        // Ensure the image URL is set before adding to Firestore
         if (!this.newProduct.image) {
           console.error("Image URL is missing");
           return;
         }
 
-        // Add product to Firestore with auto-generated ID
         const docRef = await addDoc(collection(db, "menu"), {
           name: this.newProduct.name,
           category: this.newProduct.category,
           price: this.newProduct.price,
           isAvailable: this.newProduct.isAvailable,
-          image: this.newProduct.image, // Use the uploaded image URL
+          image: this.newProduct.image,
         });
 
-        // Retrieve Firestore-generated ID and add it to the local products array
         const productWithId = { id: docRef.id, ...this.newProduct };
         this.products.push(productWithId);
+        this.filteredProducts.push(productWithId); // Update filtered products
 
         this.closeModal();
       } catch (error) {
@@ -188,6 +206,7 @@ export default {
         const index = this.products.findIndex((p) => p.id === this.newProduct.id);
         if (index !== -1) {
           this.products[index] = { ...this.newProduct };
+          this.filterProducts(); // Re-filter after update
         }
 
         this.closeModal();
@@ -200,6 +219,7 @@ export default {
         const productRef = doc(db, "menu", productId);
         await deleteDoc(productRef);
         this.products = this.products.filter((product) => product.id !== productId);
+        this.filterProducts(); // Re-filter after deletion
       } catch (error) {
         console.error("Error deleting product:", error);
       }
@@ -210,7 +230,7 @@ export default {
         category: "",
         price: 0,
         isAvailable: true,
-        image: null, // Reset image to null for new product
+        image: null,
       };
     },
   },
@@ -290,7 +310,7 @@ h3 {
   font-family: inherit;
   font-size: 14px;
   font-weight: bold;
-  padding: 10px 0;
+  padding: 6px 10px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -364,18 +384,33 @@ th, td {
 .btn-edit {
   background-color: blue;
   color: white;
-  padding: 5px 10px;
+  padding: 6px 10px;
   border: none;
-  border-radius: 5px;
+  border-radius: 3px;
   cursor: pointer;
+  margin: 0 4px 0 0; /* Space to the right */
 }
 
 .btn-delete {
   background-color: red;
   color: white;
-  padding: 5px 10px;
+  padding: 6px 10px;
   border: none;
-  border-radius: 5px;
+  border-radius: 3px;
   cursor: pointer;
+  margin-left: 4px; /* Space to the left */
+}
+
+/* Search Bar Styles */
+.search-bar {
+  margin-bottom: 20px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 </style>

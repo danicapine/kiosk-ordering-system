@@ -7,11 +7,13 @@
         <h2 class="sidebar-heading">Chillax Cafe Admin</h2>
       </div>
       <div class="list-group list-group-flush">
-        <button @click="showSection('dashboard')" :class="['list-group-item', { active: activeSection === 'dashboard' }]">Home</button>
+        <!-- Home Button to display SalesDashboard -->
+        <button @click="showSection('home')" :class="['list-group-item', { active: activeSection === 'home' }]">Home</button>
+        
+        <!-- Other sections -->
         <button @click="showSection('orders')" :class="['list-group-item', { active: activeSection === 'orders' }]">Orders</button>
         <button @click="showSection('menu')" :class="['list-group-item', { active: activeSection === 'menu' }]">Menu</button>
-        <button @click="showSection('categories')" :class="['list-group-item', { active: activeSection === 'categories' }]">Categories</button>
-        <button @click="showSection('users')" :class="['list-group-item', { active: activeSection === 'users' }]">Users</button>
+  
       </div>
     </div>
 
@@ -20,39 +22,9 @@
       <div class="container mt-4">
         <h1 class="text-center mb-4">{{ getSectionTitle }}</h1>
 
-        <!-- Dashboard Section -->
-        <div v-if="activeSection === 'dashboard'" class="overview">
-          <div class="card-container">
-            <div class="card">
-              <p>Today's Sales</p>
-              <h5>₱{{ dailySales.toFixed(2) }}</h5>
-            </div>
-            <div class="card">
-              <p>Monthly Sales</p>
-              <h5>₱{{ monthlySales.toFixed(2) }}</h5>
-            </div>
-            <div class="card">
-              <p>Yearly Sales</p>
-              <h5>₱{{ yearlySales.toFixed(2) }}</h5>
-            </div>
-          </div>
-
-          <!-- Historical Daily Sales Table -->
-          <h3 class="mt-5">Daily Sales History</h3>
-          <table class="table table-striped mt-3">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Total Sales</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(record, index) in previousDailySales" :key="index">
-                <td>{{ formatDate(record.date) }}</td>
-                <td>₱{{ record.totalSales.toFixed(2) }}</td>
-              </tr>
-            </tbody>
-          </table>
+        <!-- Home Section - SalesDashboard Component -->
+        <div v-if="activeSection === 'home'">
+          <SalesDashboard />
         </div>
 
         <!-- Orders Section -->
@@ -62,8 +34,10 @@
 
         <!-- Menu Management Section -->
         <div v-if="activeSection === 'menu'" class="menu">
-          <AdminMenu /> <!-- Corrected to AdminMenu -->
+          <AdminMenu />
         </div>
+
+        <!-- Other Sections can be added similarly here -->
       </div>
     </div>
   </div>
@@ -71,38 +45,32 @@
 
 <script>
 import CustomerOrder from "@/components/CustomerOrder.vue";
-import AdminMenu from "@/components/AdminMenu.vue"; // Using AdminMenu instead of Menu
-import { db } from "../config/firebaseConfig";
-import { startOfDay, endOfDay, startOfMonth, endOfMonth, startOfYear, endOfYear } from "date-fns";
-import { collection, query, where, addDoc, onSnapshot, doc, updateDoc } from "firebase/firestore";
+import AdminMenu from "@/components/AdminMenu.vue";
+import SalesDashboard from "@/components/SalesDashboard.vue"; // Import the SalesDashboard component
 
 export default {
   components: {
     CustomerOrder,
-    AdminMenu, // Updated to AdminMenu
+    AdminMenu,
+    SalesDashboard, // Register SalesDashboard
   },
   data() {
     return {
-      activeSection: "dashboard",
+      activeSection: "home", // Default section set to "home"
       isToggled: false,
-      dailySales: 0,
-      monthlySales: 0,
-      yearlySales: 0,
-      previousDailySales: [],
-      products: [], // Products will be populated in AdminMenu component
     };
   },
   computed: {
     getSectionTitle() {
       switch (this.activeSection) {
-        case "dashboard":
-          return "Overview";
-        case "categories":
-          return "Categories";
-        case "menu":
-          return "Menu Management";
+        case "home":
+          return "Sales Dashboard"; // Title for Sales Dashboard
         case "orders":
           return "Customer Orders";
+        case "menu":
+          return "Menu Management";
+        case "categories":
+          return "Categories";
         case "users":
           return "Users";
         default:
@@ -114,104 +82,6 @@ export default {
     showSection(section) {
       this.activeSection = section;
     },
-    async calculateDailySales() {
-      const todayStart = startOfDay(new Date());
-      const todayEnd = endOfDay(new Date());
-
-      const q = query(
-        collection(db, "sales"),
-        where("saleDate", ">=", todayStart),
-        where("saleDate", "<=", todayEnd),
-        where("status", "==", "Ready")
-      );
-
-      onSnapshot(q, (snapshot) => {
-        this.dailySales = snapshot.docs.reduce((total, doc) => {
-          const sale = doc.data();
-          return total + (sale.total || 0);
-        }, 0);
-      });
-    },
-    async calculateMonthlySales() {
-      const monthStart = startOfMonth(new Date());
-      const monthEnd = endOfMonth(new Date());
-
-      const q = query(
-        collection(db, "sales"),
-        where("saleDate", ">=", monthStart),
-        where("saleDate", "<=", monthEnd),
-        where("status", "==", "Ready")
-      );
-
-      onSnapshot(q, (snapshot) => {
-        this.monthlySales = snapshot.docs.reduce((total, doc) => {
-          const sale = doc.data();
-          return total + (sale.total || 0);
-        }, 0);
-      });
-    },
-    async calculateYearlySales() {
-      const yearStart = startOfYear(new Date());
-      const yearEnd = endOfYear(new Date());
-
-      const q = query(
-        collection(db, "sales"),
-        where("saleDate", ">=", yearStart),
-        where("saleDate", "<=", yearEnd),
-        where("status", "==", "Ready")
-      );
-
-      onSnapshot(q, (snapshot) => {
-        this.yearlySales = snapshot.docs.reduce((total, doc) => {
-          const sale = doc.data();
-          return total + (sale.total || 0);
-        }, 0);
-      });
-    },
-    async saveDailySalesAndReset() {
-      if (this.dailySales > 0) {
-        try {
-          await addDoc(collection(db, "dailySalesHistory"), {
-            date: new Date(),
-            totalSales: this.dailySales,
-          });
-          this.dailySales = 0;
-        } catch (error) {
-          console.error("Error saving daily sales:", error);
-        }
-      }
-    },
-    async updateOrderStatus(orderId) {
-      try {
-        const orderRef = doc(db, "sales", orderId);
-        await updateDoc(orderRef, { status: "Ready" });
-      } catch (error) {
-        console.error("Error updating order status:", error);
-      }
-    },
-    formatDate(date) {
-      return date.toDate().toLocaleDateString();
-    },
-    scheduleDailyReset() {
-      const now = new Date();
-      const midnight = new Date(now);
-      midnight.setHours(24, 0, 0, 0);
-
-      const timeUntilMidnight = midnight - now;
-      this.dailyResetTimer = setTimeout(() => {
-        this.saveDailySalesAndReset();
-        this.scheduleDailyReset();
-      }, timeUntilMidnight);
-    },
-  },
-  async mounted() {
-    await this.calculateDailySales();
-    await this.calculateMonthlySales();
-    await this.calculateYearlySales();
-    this.scheduleDailyReset();
-  },
-  beforeUnmount() {
-    clearTimeout(this.dailyResetTimer);
   },
 };
 </script>
@@ -236,7 +106,7 @@ export default {
   
   /* Sidebar Styles */
   #sidebar-wrapper {
-    width: 230px;
+    width: 220px;
     background: var(--sidebar-bg-gradient);
     color: var(--sidebar-text-color);
     height: 100vh;
@@ -303,7 +173,7 @@ export default {
   
   /* Page Content Wrapper */
   #page-content-wrapper {
-    margin-left: 250px;
+    margin-left: 236px;
     width: calc(100% - 250px);
     background-color: var(--content-bg-color);
     padding-top: 20px;

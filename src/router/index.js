@@ -11,6 +11,7 @@ import OrderModeOptions from '@/components/OrderModeOptions.vue';
 import ConfirmationScreen from "@/components/ConfirmationScreen.vue";
 import AdminDash from '@/components/AdminDash.vue';
 import AdminMenu from '@/components/AdminMenu.vue';
+import SalesDashboard from '@/components/SalesDashboard.vue';
 /*import CashlessPayment from '@/components/CashlessPayment.vue';
 import CashPayment from '@/components/CashPayment.vue';*/
 
@@ -74,6 +75,11 @@ export default new Router({
       path: '/admin-menu',
       name: 'AdminMenu',
       component: AdminMenu,
+    },
+    {
+      path: '/sales-dashboard',
+      name: 'SalesDashboard',
+      component: SalesDashboard,
     },
     /* Uncomment if needed in the future
     {

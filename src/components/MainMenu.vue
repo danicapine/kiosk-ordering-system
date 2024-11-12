@@ -64,9 +64,9 @@
             <button @click="increaseQuantity" class="quantity-btn">+</button>
           </div>
           <div class="modal-actions">
-            <span class="food-price">₱ {{ (selectedFood.price * quantity).toFixed(2) }}</span>
-            <button class="add-to-order-btn" @click="addToOrder">Add to Order</button>
-          </div>
+          <span class="food-price large-price">₱ {{ (selectedFood.price * quantity).toFixed(2) }}</span>
+          <button class="add-to-order-btn" @click="addToOrder">Add to Order</button>
+        </div>
         </div>
         <button class="cancel-btn" @click="closeFoodModal">Cancel</button>
       </div>
@@ -177,7 +177,7 @@ html, body {
   display: flex;
   min-height: 100vh;
   color: rgba(79, 53, 38, 1);
-  font-size: larger;
+  font-size: x-large;
   background-image: url('@/assets/bg.png'); /* Path to your background image */
   background-size: cover;
   background-position: center;
@@ -426,11 +426,19 @@ html, body {
 }
 
 .add-to-order-btn {
-  background-color: #ffcc00;
+  background-color: green;
+  color:white;
 }
 
 .cancel-btn {
   background-color: red;
   color: white;
 }
+.large-price {
+  font-size: 1.5em; /* Adjust this value to make it larger */
+  font-weight: bold;
+  color: #d4af37; /* Gold color for visibility */
+  margin-bottom: 10px; /* Add some space below the price if needed */
+}
+
 </style>

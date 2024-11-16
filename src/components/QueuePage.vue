@@ -1,12 +1,12 @@
 <template>
-  <div class="container order-queue">
+  <div class="container-fluid order-queue">
     <h1 class="text-center my-4">Order Queue</h1>
 
     <div class="row">
       <!-- Preparing Orders -->
       <div class="col-md-6">
         <div class="card">
-          <div class="card-header bg-dark text-white">Now Preparing</div>
+          <div class="card-header bg-coffee-dark text-light">Now Preparing</div>
           <ul class="list-group list-group-flush">
             <li v-for="order in inProgressOrders" :key="order.id" class="list-group-item order-number">
               {{ order.orderNumber }}
@@ -19,7 +19,7 @@
       <!-- Now Serving Orders -->
       <div class="col-md-6">
         <div class="card">
-          <div class="card-header bg-primary text-white">Now Serving</div>
+          <div class="card-header bg-coffee-light text-brown">Now Serving</div>
           <ul class="list-group list-group-flush">
             <li v-for="order in nowServingOrders" :key="order.id" class="list-group-item order-number">
               {{ order.orderNumber }}
@@ -44,7 +44,6 @@ export default {
     };
   },
   computed: {
-    // Filtered lists for orders in progress and now serving
     inProgressOrders() {
       return this.orders.filter((order) => order.status === "Preparing");
     },
@@ -53,10 +52,9 @@ export default {
     },
   },
   created() {
-    this.fetchOrders(); // Real-time updates for orders
+    this.fetchOrders();
   },
   methods: {
-    // Fetch Orders in Real-Time
     fetchOrders() {
       const ordersCollection = collection(db, "orders");
       onSnapshot(ordersCollection, (snapshot) => {
@@ -72,24 +70,79 @@ export default {
 </script>
 
 <style scoped>
+/* Café-inspired color theme */
+:root {
+  --coffee-dark: #4e342e;
+  --coffee-light: #d7b89e;
+  --cream: #f3e5ab;
+  --text-muted: #8b7e74;
+  --text-light: #f3e5e5;
+}
+
 .order-queue {
   padding: 20px;
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--cream);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
 }
 
-.order-queue .card {
+.order-queue h1 {
+  color: var(--coffee-dark);
+}
+
+/* Card styling with café theme colors */
+.card {
   margin-bottom: 20px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
 }
 
-/* Make the order numbers larger and more prominent */
+.card-header {
+  font-weight: bold;
+  font-size: 1.1em;
+  padding: 10px;
+}
+
+.bg-coffee-dark {
+  background-color: var(--coffee-dark);
+}
+
+.bg-coffee-light {
+  background-color: var(--coffee-light);
+}
+
+/* Text colors */
+.text-light {
+  color: #f3e5e5; /* Lighter shade for better readability on dark background */
+}
+
+.text-brown {
+  color: var(--coffee-dark);
+}
+
 .order-number {
-  font-size: 1.5em; /* Increase font size */
+  font-size: 1.5em;
   font-weight: bold;
   text-align: center;
-  color: #333;
+  color: var(--coffee-dark);
 }
 
-/* Optional: Add more styling to the Now Serving order number */
-.card-header.bg-primary ~ .list-group .order-number {
-  color: #007bff; /* Change text color for "Now Serving" orders */
+.text-muted {
+  color: var(--text-muted);
+}
+
+.list-group-item.text-muted {
+  font-style: italic;
+  color: var(--text-muted);
+}
+
+.list-group-item {
+  background-color: #fdfaf5;
+  border: none;
 }
 </style>

@@ -1,3 +1,8 @@
+Final code
+
+
+Main menu
+
 <template>
   <div class="main-menu">
     <!-- Sidebar Navigation -->
@@ -442,3 +447,6 @@ html, body {
 }
 
 </style>
+
+
+

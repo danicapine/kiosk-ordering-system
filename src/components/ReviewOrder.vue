@@ -95,9 +95,18 @@ export default {
         item.totalPrice = item.price * item.quantity;
       });
     },
-    removeItem(uniqueId) {
-      this.cart = this.cart.filter(item => item.uniqueId !== uniqueId);
-      this.saveCart();
+        removeItem(uniqueId) {
+      // Check if the item with the given uniqueId exists
+      const itemIndex = this.cart.findIndex(item => item.uniqueId === uniqueId);
+
+      if (itemIndex !== -1) {
+        // Remove the specific item from the cart array
+        this.cart.splice(itemIndex, 1);
+        // Save the updated cart to localStorage
+        this.saveCart();
+      } else {
+        console.error(`Item with uniqueId ${uniqueId} not found.`);
+      }
     },
     saveCart() {
       localStorage.setItem('cart', JSON.stringify(this.cart));
@@ -135,19 +144,15 @@ export default {
         return !this.cart.some(cartItem => cartItem.id === item.id);
       });
     },
-    addSuggestedItem(suggestion) {
-      // Create a new item object with a truly unique identifier
+        addSuggestedItem(suggestion) {
       const newItem = {
-        ...JSON.parse(JSON.stringify(suggestion)), // Deep clone to avoid reference issues
+        ...suggestion,
         quantity: 1,
         totalPrice: suggestion.price,
-        uniqueId: Date.now() + Math.random() // Truly unique identifier
+        uniqueId: Date.now() + Math.random() // Generate a unique identifier
       };
 
-      // Push the new item to the cart
       this.cart.push(newItem);
-
-      // Save to localStorage
       this.saveCart();
 
       // Debug logs to verify

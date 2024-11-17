@@ -215,15 +215,22 @@ export default {
       }
     },
     async deleteProduct(productId) {
-      try {
-        const productRef = doc(db, "menu", productId);
-        await deleteDoc(productRef);
-        this.products = this.products.filter((product) => product.id !== productId);
-        this.filterProducts(); // Re-filter after deletion
-      } catch (error) {
-        console.error("Error deleting product:", error);
-      }
-    },
+  const confirmDelete = window.confirm("Are you sure you want to delete this product?");
+  if (!confirmDelete) {
+    return; // Exit if the user cancels
+  }
+
+        try {
+          const productRef = doc(db, "menu", productId);
+          await deleteDoc(productRef);
+          this.products = this.products.filter((product) => product.id !== productId);
+          this.filterProducts(); // Re-filter after deletion
+          alert("Product deleted successfully!");
+        } catch (error) {
+          console.error("Error deleting product:", error);
+          alert("Failed to delete the product. Please try again.");
+        }
+      },
     resetNewProduct() {
       this.newProduct = {
         name: "",

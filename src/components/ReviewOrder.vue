@@ -8,8 +8,8 @@
           <div class="item-header">
             <h3 class="item-name">{{ item.name }}</h3>
             <button @click="removeItem(item.uniqueId)" class="remove-btn">
-              <span class="remove-icon">×</span>
-            </button>
+            Remove
+          </button>
           </div>
           <p class="item-price">₱ {{ item.price.toFixed(2) }}</p>
           <div class="quantity-controls">
@@ -154,11 +154,13 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
+
 .review-order {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Roboto', sans-serif;
   background-color: #F4EFE6; /* Warm beige background for a cozy feel */
   border-radius: 16px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -167,9 +169,9 @@ export default {
 h2 {
   text-align: center;
   color: #5A3A31; /* Dark coffee brown for text */
+  font-weight: bold;
   font-size: 2.5rem;
   margin-bottom: 2rem;
-  text-transform: uppercase;
   letter-spacing: 2px;
 }
 
@@ -206,18 +208,21 @@ h2 {
 .item-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
+  align-items: flex-start; /* Align the items to the top */
+  gap: 1rem; /* Add some spacing between the name and button */
 }
 
 .item-name {
-  font-size: 1.2rem;
+  font-size: 1.6rem;
   font-weight: 600;
-  color: #5A3A31; /* Dark coffee brown for item name */
+  color: #5A3A31;
+  word-wrap: break-word; /* Allow long words to wrap */
+  white-space: normal; /* Prevent the text from staying in one line */
+  max-width: 70%; /* Restrict the width of the item name */
 }
 
 .item-price {
-  font-size: 1.1rem;
+  font-size: 1.5rem;
   color: #8B5E3C; /* Warm caramel for price */
   font-weight: 600;
   margin-bottom: 0.5rem;
@@ -234,8 +239,8 @@ h2 {
   color: white;
   border: none;
   border-radius: 50%;
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
   font-size: 1.2rem;
   cursor: pointer;
   display: flex;
@@ -254,7 +259,7 @@ h2 {
 
 .quantity {
   margin: 0 1rem;
-  font-size: 1.1rem;
+  font-size: 1.5rem;
   font-weight: 600;
   color: #5A3A31;
 }
@@ -279,20 +284,23 @@ h2 {
 }
 
 .remove-btn {
-  background-color: transparent;
+  background-color: #B73E3E; /* Warm red for the remove button */
+  color: white;
   border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
   cursor: pointer;
-  padding: 0;
+  transition: background-color 0.3s ease, transform 0.1s;
 }
 
-.remove-icon {
-  font-size: 1.5rem;
-  color: #B73E3E; /* Warm red for remove button */
-  transition: color 0.3s;
+.remove-btn:hover {
+  background-color: #8B2C2C; /* Darker red for hover effect */
 }
 
-.remove-icon:hover {
-  color: #8B2C2C;
+.remove-btn:active {
+  transform: scale(0.95); /* Slightly shrink button on click */
 }
 
 .order-summary {

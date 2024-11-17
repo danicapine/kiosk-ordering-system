@@ -14,7 +14,7 @@
         :class="{ active: selectedCategory === category.name }"
         class="sidebar-item"
       >
-        <img :src="category.image" :alt="category.name" class="sidebar-image" />
+        <span class="category-icon">{{ category.icon }}</span>
       </div>
     </div>
 
@@ -64,9 +64,9 @@
             <button @click="increaseQuantity" class="quantity-btn">+</button>
           </div>
           <div class="modal-actions">
-          <span class="food-price large-price">₱ {{ (selectedFood.price * quantity).toFixed(2) }}</span>
-          <button class="add-to-order-btn" @click="addToOrder">Add to Order</button>
-        </div>
+            <span class="food-price large-price">₱ {{ (selectedFood.price * quantity).toFixed(2) }}</span>
+            <button class="add-to-order-btn" @click="addToOrder">Add to Order</button>
+          </div>
         </div>
         <button class="cancel-btn" @click="closeFoodModal">Cancel</button>
       </div>
@@ -83,11 +83,11 @@ export default {
   data() {
     return {
       categories: [
-        { name: 'All', image: require('@/assets/all.png') },
-        { name: 'Rice', image: require('@/assets/ricemeal.png') },
-        { name: 'Chicken', image: require('@/assets/flavored.png') },
-        { name: 'Burgers', image: require('@/assets/burgers.png') },
-        { name: 'Pasta', image: require('@/assets/pasta.png') },
+        { name: 'All', icon: 'ALL' },
+        { name: 'Rice', icon: 'RICE' },
+        { name: 'Chicken', icon: 'CHKN' },
+        { name: 'Burgers', icon: 'BRGR' },
+        { name: 'Pasta', icon: 'PSTA' },
       ],
       selectedCategory: 'All',
       foods: [],
@@ -106,8 +106,8 @@ export default {
       onSnapshot(menuRef, (snapshot) => {
         this.foods = snapshot.docs
           .map((doc) => ({ id: doc.id, ...doc.data() }))
-          .filter((food) => food.isAvailable); // Only show available items
-        this.filterFoods(); // Update the displayed items based on current filters
+          .filter((food) => food.isAvailable);
+        this.filterFoods();
       });
     },
     filterByCategory(category) {
@@ -115,13 +115,13 @@ export default {
       this.filterFoods();
     },
     filterFoods() {
-  const query = this.searchQuery ? this.searchQuery.toLowerCase() : ''; // Ensure searchQuery is a string
-  this.filteredFoods = this.foods.filter(food => {
-    const matchesCategory = this.selectedCategory === 'All' || food.category === this.selectedCategory;
-    const matchesSearch = food.name && food.name.toLowerCase().startsWith(query); // Check if food.name starts with query
-    return matchesCategory && matchesSearch;
-  });
-},
+      const query = this.searchQuery ? this.searchQuery.toLowerCase() : '';
+      this.filteredFoods = this.foods.filter(food => {
+        const matchesCategory = this.selectedCategory === 'All' || food.category === this.selectedCategory;
+        const matchesSearch = food.name && food.name.toLowerCase().startsWith(query);
+        return matchesCategory && matchesSearch;
+      });
+    },
     openFoodModal(food) {
       this.selectedFood = food;
       this.quantity = 1;
@@ -159,7 +159,7 @@ export default {
 
         localStorage.setItem('cart', JSON.stringify(cart));
         this.closeFoodModal();
-        this.$router.push('/review-order'); // Redirect to Review Order page
+        this.$router.push('/review-order');
       }
     }
   }
@@ -171,240 +171,283 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
+  font-family: 'Arial', sans-serif;
 }
 
 .main-menu {
   display: flex;
   min-height: 100vh;
-  color: rgba(79, 53, 38, 1);
-  font-size: x-large;
-  background-image: url('@/assets/bg.png'); /* Path to your background image */
-  background-size: cover;
-  background-position: center;
-  padding-left: 90px; /* Add padding to offset sidebar width */
+  color: #6D4C41;
+  font-size: 16px;
+  background-color: #F5F5DC;
+  padding-left: 100px;
   position: relative;
 }
 
 .sidebar {
-  width: 95px;
-  background-color: rgba(75, 50, 37, 0.9); /* Dark brown with slight opacity */
+  width: 100px;
+  background-color: rgba(139, 69, 19, 0.95);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 10px; /* Reduced padding */
-  border-radius: 12px 0 0 12px; /* Rounded corners */
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3); /* Shadow for depth */
-  position: fixed; /* Fixed positioning for better alignment */
+  padding: 20px 10px;
+  border-radius: 0 20px 20px 0;
+  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+  position: fixed;
   height: 100vh;
   top: 0;
   left: 0;
-  z-index: 1; /* Ensures it sits behind other main content */
+  z-index: 10;
+  transition: width 0.3s ease;
+}
+
+.sidebar:hover {
+  width: 120px;
 }
 
 .logo-container {
-  margin-bottom: 15px; /* Slightly smaller margin */
+  margin-bottom: 30px;
   text-align: center;
-  background-color: whitesmoke;/* Light background for visibility */
-  padding: 5px; /* Padding around the logo */
-  border-radius: 8px; /* Rounded corners */
+  background-color: #ffffff;
+  padding: 10px;
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .logo-image {
-  width: 70px; /* Adjusted size */
-  height: 70px;
+  width: 60px;
+  height: 60px;
   object-fit: contain;
-  border-radius: 8px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Soft shadow for visibility */
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+
+.logo-container:hover .logo-image {
+  transform: scale(1.1);
 }
 
 .sidebar-item {
   margin: 15px 0;
   cursor: pointer;
-  width: 60px;
-  height: 60px;
+  width: 70px;
+  height: 70px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
-  transition: background-color 0.3s, transform 0.2s, width 0.3s, height 0.3s;
+  border-radius: 15px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  color: #ffffff;
 }
 
-.sidebar-item:hover {
-  background-color: rgba(255, 204, 0, 0.3); /* Subtle highlight on hover */
+.sidebar-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle, #D2B48C(255,204,0,0.2) 0%, #D2B48C(255,204,0,0) 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.sidebar-item:hover::before,
+.sidebar-item.active::before {
+  opacity: 1;
 }
 
 .sidebar-item.active {
-  background-color: rgba(255, 204, 0, 0.8); /* Brighter background for active category */
-  border: 3px solid #ffcc00; /* Thicker golden border */
-  width: 70px; /* Increase width */
-  height: 70px; /* Increase height */
-  transform: scale(1.1); /* Slightly larger to indicate active state */
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3); /* Stronger shadow for emphasis */
+  background-color: rgba(255, 204, 0, 0.2);
+  box-shadow: 0 4px 15px rgba(255, 204, 0, 0.3);
+  transform: translateY(-5px);
 }
 
-.sidebar-image {
-  width: 60px;
-  height: 60px;
-  object-fit: contain;
-  border-radius: 4px;
-  transition: transform 0.3s ease; /* Smooth transition for scaling */
+.sidebar-item:hover,
+.sidebar-item.active {
+  color: #ffcc00;
 }
 
-.sidebar-item:hover .sidebar-image,
-.sidebar-item.active .sidebar-image {
-  transform: scale(1.2); /* Enlarge image on hover and active state */
-}
 .menu-content {
   flex-grow: 1;
-  padding: 20px;
-  border-radius: 8px;
-  z-index: 2; /* Ensure it sits above the sidebar */
+  padding: 40px;
+  border-radius: 20px;
+  z-index: 2;
+  background-color: rgba(245, 245, 220, 0.9);
+  margin: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
 .search-bar {
-  margin-bottom: 10px;
+  margin-bottom: 30px;
 }
 
 .search-input {
   width: 100%;
-  padding: 10px;
-  font-size: 1em;
-  border: 2px solid #ffffff; /* White border for visibility */
-  border-radius: 6px;
-  background-color: rgba(255, 255, 255, 0.2); /* Light white background for better contrast */
-  color: #ffffff; /* White text color */
-  outline: none; /* Remove the default outline */
+  padding: 15px 20px;
+  font-size: 1.1em;
+  border: none;
+  border-radius: 30px;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #4a3c31;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  box-shadow: 0 4px 20px rgba(255, 204, 0, 0.3);
 }
 
 .search-input::placeholder {
-  color: rgba(255, 255, 255, 0.7); /* Light white color for placeholder text */
+  color: #a0918c;
 }
 
 .food-items {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 25px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 30px;
   justify-items: center;
 }
 
 .food-item {
-  background-color: rgba(75, 50, 37, 0.8); /* Brown with 80% opacity */
-  border: 1px solid rgba(79, 53, 38, 0.5); /* Light brown border with transparency */
-  border-radius: 12px;
-  width: 250px;
-  height: 350px;
+  background-color: #FFF8DC;
+  border-radius: 20px;
+  width: 280px;
+  height: 380px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding: 15px;
+  padding: 20px;
   text-align: center;
   cursor: pointer;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  overflow: hidden;
 }
 
 .food-item:hover {
-  transform: scale(1.03);
-  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
 }
 
 .food-image {
   width: 100%;
-  height: 200px;
+  height: 220px;
   object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 10px;
+  border-radius: 15px;
+  margin-bottom: 15px;
+  transition: transform 0.3s ease;
+}
+
+.food-item:hover .food-image {
+  transform: scale(1.05);
 }
 
 .food-details {
-  margin-top: 10px;
+  margin-top: 15px;
 }
 
 .food-name {
   font-weight: 600;
-  font-size: 1.1em;
-  color: #fff; /* White text for contrast */
-  margin-bottom: 8px;
+  font-size: 1.2em;
+  color: #6D4C41;
+  margin-bottom: 10px;
 }
 
 .food-price-container {
-  margin-top: 5px;
+  margin-top: 10px;
 }
 
 .food-price {
   font-weight: bold;
-  color: #d4af37; /* Gold color for price */
+  color: #8B4513;
+  font-size: 1.3em;
 }
+
 .food-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999; /* High z-index to ensure it stays on top */
+  z-index: 1000;
+  backdrop-filter: blur(5px);
 }
 
 .food-modal {
-  background-color: whitesmoke;
-  padding: 40px; /* Increased padding for a larger appearance */
-  border-radius: 12px;
-  width: 350px; /* Increased width */
-  max-width: 90%; /* Ensures responsiveness on smaller screens */
-  height: auto; /* Let the content define the height */
+  background-color: #F5F5DC;
+  padding: 40px;
+  border-radius: 25px;
+  width: 400px;
+  max-width: 90%;
   text-align: center;
-  z-index: 10000; /* Even higher to ensure it appears above the overlay */
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
 }
 
-.food-modal {
-  background-color:whitesmoke;
-  padding: 40px; /* Increased padding for a larger appearance */
-  border-radius: 12px;
-  width: 350px; /* Increased width */
-  max-width: 90%; /* Ensures responsiveness on smaller screens */
-  height: auto; /* Let the content define the height */
-  text-align: center;
+.food-modal-title {
+  font-size: 1.8em;
+  color: #6D4C41;
+  margin-bottom: 20px;
 }
 
 .image-container {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
   width: 100%;
-  height: 200px;
+  height: 250px;
+  overflow: hidden;
+  border-radius: 15px;
 }
 
 .modal-food-image {
-  max-width: 100%;
-  max-height: 100%;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  border-radius: 8px;
+  transition: transform 0.3s ease;
+}
+
+.image-container:hover .modal-food-image {
+  transform: scale(1.05);
 }
 
 .modal-quantity {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 10px 0;
+  margin: 20px 0;
 }
 
 .quantity-btn {
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   font-size: 1.2em;
-  background-color: #ffcc00;
+  background-color: #8B4513;
   border: none;
+  border-radius: 50%;
   cursor: pointer;
-  margin: 0 5px;
+  margin: 0 10px;
+  color: #F5F5DC;
+  transition: all 0.3s ease;
+}
+
+.quantity-btn:hover {
+  background-color: #A0522D;
+  transform: scale(1.1);
 }
 
 .quantity {
-  font-size: 1.2em;
+  font-size: 1.4em;
+  font-weight: bold;
+  color: #6D4C41;
 }
 
 .modal-actions {
@@ -413,32 +456,77 @@ html, body {
   align-items: center;
 }
 
+.large-price {
+  font-size: 1.8em;
+  font-weight: bold;
+  color: #8B4513;
+  margin-bottom: 20px;
+}
+
 .add-to-order-btn,
 .cancel-btn {
-  width: 100%; /* Full width to match the image container */
-  padding: 12px 0; /* Increased padding for height */
+  width: 100%;
+  padding: 15px 0;
   border: none;
-  border-radius: 6px; /* Slightly rounded corners */
+  border-radius: 30px;
   cursor: pointer;
-  font-size: 1.1em; /* Larger font size for readability */
-  margin-top: 15px; /* More space above */
-  text-align: center;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
 }
 
 .add-to-order-btn {
-  background-color: green;
-  color:white;
+  background-color: #8B4513;
+  color: #F5F5DC;
+  margin-bottom: 10px;
+}
+
+.add-to-order-btn:hover {
+  background-color: #A0522D;
+  box-shadow: 0 5px 15px rgba(139, 69, 19, 0.4);
 }
 
 .cancel-btn {
-  background-color: red;
-  color: white;
-}
-.large-price {
-  font-size: 1.5em; /* Adjust this value to make it larger */
-  font-weight: bold;
-  color: #d4af37; /* Gold color for visibility */
-  margin-bottom: 10px; /* Add some space below the price if needed */
+  background-color: #D2B48C;
+  color: #6D4C41;
 }
 
+.cancel-btn:hover {
+  background-color: #DEB887;
+  box-shadow: 0 5px 15px rgba(210, 180, 140, 0.4);
+}
+
+.category-icon {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .main-menu {
+    padding-left: 80px;
+  }
+
+  .sidebar {
+    width: 80px;
+  }
+
+  .food-items {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  }
+
+  .food-item {
+    width: 220px;
+    height: 320px;
+  }
+
+  .food-image {
+    height: 180px;
+  }
+
+  .food-modal {
+    width: 90%;
+    padding: 30px;
+  }
+}
 </style>

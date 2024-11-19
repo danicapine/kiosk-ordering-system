@@ -2,11 +2,12 @@
   <div class="main-menu">
     <!-- Sidebar Navigation -->
     <div class="sidebar">
+      <!-- Logo Section -->
       <div class="logo-container">
         <img src="@/assets/apple-touch-icon.png" alt="Logo" class="logo-image" />
       </div>
 
-      <!-- Category Icons -->
+      <!-- Category Labels -->
       <div
         v-for="category in categories"
         :key="category.name"
@@ -14,7 +15,7 @@
         :class="{ active: selectedCategory === category.name }"
         class="sidebar-item"
       >
-        <span class="category-icon">{{ category.icon }}</span>
+        <span class="category-label">{{ category.label }}</span>
       </div>
     </div>
 
@@ -83,11 +84,11 @@ export default {
   data() {
     return {
       categories: [
-        { name: 'All', icon: 'ALL' },
-        { name: 'Rice', icon: 'RICE' },
-        { name: 'Chicken', icon: 'CHKN' },
-        { name: 'Burgers', icon: 'BRGR' },
-        { name: 'Pasta', icon: 'PSTA' },
+        { name: 'All', label: 'All' },
+        { name: 'Rice', label: 'Rice' },
+        { name: 'Chicken', label: 'Chicken' },
+        { name: 'Burgers', label: 'Burgers' },
+        { name: 'Pasta', label: 'Pasta' },
       ],
       selectedCategory: 'All',
       foods: [],
@@ -166,33 +167,42 @@ export default {
 };
 </script>
 
+
 <style scoped>
+:root {
+  --coffee-dark: #4e342e;
+  --coffee-light: #d7b89e;
+  --cream: #f3e5ab;
+  --text-muted: #8b7e74;
+  --text-light: #f3e5e5;
+}
+
 html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  font-family: 'Arial', sans-serif;
+  font-family: 'Roboto', sans-serif;
 }
 
 .main-menu {
   display: flex;
   min-height: 100vh;
-  color: #6D4C41;
+  color: var(--text-muted);
   font-size: 16px;
-  background-color: #F5F5DC;
+  background-color: var(--cream);
   padding-left: 100px;
   position: relative;
 }
 
 .sidebar {
   width: 100px;
-  background-color: rgba(139, 69, 19, 0.95);
+  background: linear-gradient(135deg, #3b2c28, #705c55);
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 20px 10px;
   border-radius: 0 20px 20px 0;
-  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2);
   position: fixed;
   height: 100vh;
   top: 0;
@@ -208,10 +218,10 @@ html, body {
 .logo-container {
   margin-bottom: 30px;
   text-align: center;
-  background-color: #ffffff;
+  background-color: #D7C4B7;
   padding: 10px;
   border-radius: 50%;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .logo-image {
@@ -235,52 +245,40 @@ html, body {
   align-items: center;
   justify-content: center;
   border-radius: 15px;
+  background: #F4EFE6;
+  color: #3B2C28;
+  font-weight: bold;
   transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-  color: #ffffff;
-}
-
-.sidebar-item::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(circle, #D2B48C(255,204,0,0.2) 0%, #D2B48C(255,204,0,0) 70%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.sidebar-item:hover::before,
-.sidebar-item.active::before {
-  opacity: 1;
 }
 
 .sidebar-item.active {
-  background-color: rgba(255, 204, 0, 0.2);
-  box-shadow: 0 4px 15px rgba(255, 204, 0, 0.3);
-  transform: translateY(-5px);
+  background-color: #FFD966;
+  color: #3B2C28;
+  transform: translateY(-3px);
 }
 
-.sidebar-item:hover,
-.sidebar-item.active {
-  color: #ffcc00;
+.sidebar-item:hover {
+  background-color: #6D4C41;
+  color: #F4EFE6;
 }
 
+.category-label {
+  font-size: 1rem;
+  font-weight: bold;
+}
 .menu-content {
   flex-grow: 1;
   padding: 40px;
   border-radius: 20px;
   z-index: 2;
-  background-color: rgba(245, 245, 220, 0.9);
+  background-color: var(--cream);
   margin: 20px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
 .search-bar {
   margin-bottom: 30px;
+  
 }
 
 .search-input {
@@ -289,19 +287,14 @@ html, body {
   font-size: 1.1em;
   border: none;
   border-radius: 30px;
-  background-color: rgba(255, 255, 255, 0.9);
-  color: #4a3c31;
+  background-color: var(--coffee-light);
+  color: var(--text-muted);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
 }
 
-.search-input:focus {
-  outline: none;
-  box-shadow: 0 4px 20px rgba(255, 204, 0, 0.3);
-}
-
 .search-input::placeholder {
-  color: #a0918c;
+  color: var(--text-muted);
 }
 
 .food-items {
@@ -312,7 +305,7 @@ html, body {
 }
 
 .food-item {
-  background-color: #FFF8DC;
+  background-color: var(--coffee-light);
   border-radius: 20px;
   width: 280px;
   height: 380px;
@@ -339,11 +332,6 @@ html, body {
   object-fit: cover;
   border-radius: 15px;
   margin-bottom: 15px;
-  transition: transform 0.3s ease;
-}
-
-.food-item:hover .food-image {
-  transform: scale(1.05);
 }
 
 .food-details {
@@ -352,8 +340,8 @@ html, body {
 
 .food-name {
   font-weight: 600;
-  font-size: 1.2em;
-  color: #6D4C41;
+  font-size: 1.6em;
+  color: #5A3A31;
   margin-bottom: 10px;
 }
 
@@ -363,8 +351,8 @@ html, body {
 
 .food-price {
   font-weight: bold;
-  color: #8B4513;
-  font-size: 1.3em;
+  color: #8B5E3C;
+  font-size: 1.5em;
 }
 
 .food-modal-overlay {
@@ -373,27 +361,27 @@ html, body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.8); /* Dark overlay for focus */
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  backdrop-filter: blur(5px);
 }
 
 .food-modal {
-  background-color: #F5F5DC;
+  background-color: #F4EFE6; /* Warm beige background for a cozy feel */
   padding: 40px;
   border-radius: 25px;
   width: 400px;
   max-width: 90%;
   text-align: center;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); /* Light shadow for subtle elevation */
 }
 
 .food-modal-title {
   font-size: 1.8em;
-  color: #6D4C41;
+  color: #5A3A31; /* Dark coffee brown for text */
+  font-weight: bold;
   margin-bottom: 20px;
 }
 
@@ -406,17 +394,14 @@ html, body {
   height: 250px;
   overflow: hidden;
   border-radius: 15px;
+  background-color: #FFFFFF; /* White background to frame the image */
+  border: 2px solid #D7C4B7; /* Light border for subtle contrast */
 }
 
 .modal-food-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease;
-}
-
-.image-container:hover .modal-food-image {
-  transform: scale(1.05);
 }
 
 .modal-quantity {
@@ -429,25 +414,28 @@ html, body {
 .quantity-btn {
   width: 40px;
   height: 40px;
-  font-size: 1.2em;
-  background-color: #8B4513;
+  font-size: 1.5em;
+  background-color: #8B5E3C; /* Caramel buttons */
+  color: #FFFFFF; /* White text for contrast */
   border: none;
   border-radius: 50%;
   cursor: pointer;
   margin: 0 10px;
-  color: #F5F5DC;
-  transition: all 0.3s ease;
+  transition: background-color 0.3s, transform 0.1s;
 }
 
 .quantity-btn:hover {
-  background-color: #A0522D;
-  transform: scale(1.1);
+  background-color: #6E4728; /* Darker caramel on hover */
+}
+
+.quantity-btn:active {
+  transform: scale(0.95);
 }
 
 .quantity {
-  font-size: 1.4em;
+  font-size: 1.6em;
   font-weight: bold;
-  color: #6D4C41;
+  color: #5A3A31; /* Dark brown for visibility */
 }
 
 .modal-actions {
@@ -459,43 +447,55 @@ html, body {
 .large-price {
   font-size: 1.8em;
   font-weight: bold;
-  color: #8B4513;
+  color: #8B5E3C; /* Caramel for the price */
   margin-bottom: 20px;
 }
 
-.add-to-order-btn,
+.add-to-order-btn {
+  width: 100%;
+  padding: 15px 0;
+  border: none;
+  border-radius: 30px;
+  font-size: 1.1em;
+  font-weight: bold;
+  background-color: #8B5E3C; /* Caramel button */
+  color: #FFFFFF; /* White text for contrast */
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.1s;
+}
+
+.add-to-order-btn:hover {
+  background-color: #6E4728; /* Darker caramel on hover */
+  box-shadow: 0 5px 15px rgba(110, 71, 40, 0.2);
+}
+
+.add-to-order-btn:active {
+  transform: scale(0.98);
+}
+
 .cancel-btn {
   width: 100%;
   padding: 15px 0;
   border: none;
   border-radius: 30px;
-  cursor: pointer;
   font-size: 1.1em;
   font-weight: bold;
-  text-transform: uppercase;
-  transition: all 0.3s ease;
-}
-
-.add-to-order-btn {
-  background-color: #8B4513;
-  color: #F5F5DC;
-  margin-bottom: 10px;
-}
-
-.add-to-order-btn:hover {
-  background-color: #A0522D;
-  box-shadow: 0 5px 15px rgba(139, 69, 19, 0.4);
-}
-
-.cancel-btn {
-  background-color: #D2B48C;
-  color: #6D4C41;
+  background-color: #D7C4B7; /* Light beige for cancel button */
+  color: #5A3A31; /* Dark brown for text */
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.1s;
 }
 
 .cancel-btn:hover {
-  background-color: #DEB887;
-  box-shadow: 0 5px 15px rgba(210, 180, 140, 0.4);
+  background-color: #BFA799; /* Slightly darker beige on hover */
+  box-shadow: 0 5px 15px rgba(191, 167, 153, 0.2);
 }
+
+.cancel-btn:active {
+  transform: scale(0.98);
+}
+
 
 .category-icon {
   font-size: 18px;

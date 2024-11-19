@@ -89,14 +89,14 @@ export default {
   text-align: center;
   max-width: 600px;
   padding: 30px;
-  background-color: #f9f9f9;
+  background-color:  #f5e6d3;
   border-radius: 8px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }
 
 h2 {
   font-size: 2em;
-  color: #333;
+  color: #4e342e;
   margin-bottom: 25px;
 }
 
@@ -125,17 +125,17 @@ h2 {
 
 .option-btn p {
   font-size: 1.2em;
-  color: #333;
+  color: #4e342e;
 }
 
 .option-btn:hover {
-  border-color: #5cb85c;
+  border-color: #4e342e;
 }
 
 .back-btn {
   margin-top: 20px;
   padding: 10px 20px;
-  background-color: #5bc0de;
+  background-color: #8b5e3c;
   color: #fff;
   border: none;
   border-radius: 4px;
@@ -144,6 +144,6 @@ h2 {
 }
 
 .back-btn:hover {
-  background-color: #31b0d5;
+  background-color: #8b5e3c;
 }
 </style>

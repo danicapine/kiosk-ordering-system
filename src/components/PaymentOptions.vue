@@ -1,114 +1,142 @@
 <template>
-    <div class="payment-options-container">
-      <div class="payment-options">
-        <h2>How would you like to pay?</h2>
-        <div class="options">
-          <button @click="selectPayment('G-Cash')" class="option-btn">
-            <img src="@/assets/cashless.png" alt="Cashless Payment" />
-            <p>Pay Here (Cashless)</p>
-          </button>
-          <p>Or</p>
-          <button @click="selectPayment('Cash')" class="option-btn">
-            <img src="@/assets/cash.png" alt="Cash Payment" />
-            <p>Pay at the Counter (Cash)</p>
-          </button>
-        </div>
-        <button @click="goBack" class="back-btn">Back</button>
+  <div class="payment-options-container">
+    <div class="payment-options">
+      <h2>How would you like to pay?</h2>
+      <div class="options">
+        <button @click="selectPayment('G-Cash')" class="option-btn">
+          <img src="@/assets/cashless.png" alt="Cashless Payment" />
+          <p>Pay Here (Cashless)</p>
+        </button>
+        <p class="divider">Or</p>
+        <button @click="selectPayment('Cash')" class="option-btn">
+          <img src="@/assets/cash.png" alt="Cash Payment" />
+          <p>Pay at the Counter (Cash)</p>
+        </button>
       </div>
+      <button @click="goBack" class="back-btn">Back</button>
     </div>
-  </template>
-  
-  <script>
-  export default {
-    name: "PaymentOptions",
-    data() {
-      return {
-        selectedPaymentMethod: null,
-      };
+  </div>
+</template>
+
+<script>
+export default {
+  name: "PaymentOptions",
+  data() {
+    return {
+      selectedPaymentMethod: null,
+    };
+  },
+  methods: {
+    selectPayment(paymentMethod) {
+      this.selectedPaymentMethod = paymentMethod;
+      this.$router.push({ name: "OrderModeOptions", query: { paymentMethod } });
     },
-    methods: {
-      selectPayment(paymentMethod) {
-        this.selectedPaymentMethod = paymentMethod;
-        this.$router.push({ name: "OrderModeOptions", query: { paymentMethod } });
-      },
-      goBack() {
-        this.$router.push("/review-order");
-      },
+    goBack() {
+      this.$router.push("/review-order");
     },
-  };
-  </script>
-  
-  
-  <style scoped>
-  .payment-options-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-  }
-  
+  },
+};
+</script>
+
+<style scoped>
+.payment-options-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: white;
+  padding: 1rem;
+}
+
+.payment-options {
+  text-align: center;
+  width: 100%;
+  max-width: 600px;
+  padding: 2rem;
+  background-color: #f5e6d3;
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(78, 52, 46, 0.1);
+}
+
+h2 {
+  font-size: 2rem;
+  color: #4e342e;
+  margin-bottom: 2.5rem;
+  font-weight: 600;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.option-btn {
+  background-color: white;
+  border: 1px solid #e2d5c7;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.option-btn:hover {
+  border-color: #4e342e;
+  background-color: #faf6f3;
+}
+
+.option-btn img {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 1rem;
+}
+
+.option-btn p {
+  font-size: 1.25rem;
+  color: #4e342e;
+  margin: 0;
+}
+
+.divider {
+  font-size: 1rem;
+  color: #8b7e74;
+  margin: 0.5rem 0;
+}
+
+.back-btn {
+  margin-top: 2.5rem;
+  padding: 0.75rem 2.5rem;
+  background-color: #8b5e3c;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.back-btn:hover {
+  background-color: #4e342e;
+}
+
+@media (max-width: 640px) {
   .payment-options {
-    text-align: center;
-    max-width: 600px;
-    padding: 30px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    margin: 1rem;
   }
-  
+
   h2 {
-    font-size: 2em;
-    color: #333;
-    margin-bottom: 25px;
+    font-size: 1.75rem;
+    margin-bottom: 2rem;
   }
-  
-  .options {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
+
   .option-btn {
-    background-color: #fff;
-    border: 2px solid #ddd;
-    border-radius: 8px;
-    padding: 20px;
-    margin: 10px 0;
-    width: 100%;
-    max-width: 400px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s;
+    padding: 1.25rem;
   }
-  
-  .option-btn img {
-    width: 50px;
-    height: 50px;
-    margin-bottom: 10px;
-  }
-  
-  .option-btn p {
-    font-size: 1.2em;
-    color: #333;
-  }
-  
-  .option-btn:hover {
-    border-color: #5cb85c;
-  }
-  
-  .back-btn {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #5bc0de;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .back-btn:hover {
-    background-color: #31b0d5;
-  }
-  </style>
-  
+}
+</style>

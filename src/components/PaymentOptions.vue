@@ -121,7 +121,7 @@ h2 {
 }
 
 .back-btn:hover {
-  background-color: #4e342e;
+  background-color: #5a3d37;
 }
 
 @media (max-width: 640px) {

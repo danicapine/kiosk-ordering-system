@@ -1,5 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
+import AdminDash from '@/components/AdminDash.vue';
+import LoginPage from '@/components/LoginPage.vue';  // Import LoginPage component
 import KioskHome from '../components/KioskHome.vue';
 import SecondPage from '../components/SecondPage.vue';
 import MainMenu from '../components/MainMenu.vue';
@@ -9,7 +11,6 @@ import ReviewOrder from '@/components/ReviewOrder.vue';
 import PaymentOptions from '@/components/PaymentOptions.vue';
 import OrderModeOptions from '@/components/OrderModeOptions.vue';
 import ConfirmationScreen from "@/components/ConfirmationScreen.vue";
-import AdminDash from '@/components/AdminDash.vue';
 import AdminMenu from '@/components/AdminMenu.vue';
 import SalesDashboard from '@/components/SalesDashboard.vue';
 
@@ -20,8 +21,27 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'KioskHome',
+      name: 'KioskHome',  // Set KioskHome as the default page
       component: KioskHome,
+    },
+    {
+      path: '/login',  // Login page route
+      name: 'LoginPage',
+      component: LoginPage,
+    },
+    {
+      path: '/admin',
+      name: 'AdminDash',
+      component: AdminDash,
+      beforeEnter: (to, from, next) => {
+        // Check if the user is logged in
+        const isLoggedIn = localStorage.getItem('isLoggedIn');
+        if (!isLoggedIn) {
+          next('/login'); // Redirect to LoginPage if not logged in
+        } else {
+          next(); // Proceed to Admin Dashboard
+        }
+      }
     },
     {
       path: '/second-page',
@@ -64,11 +84,7 @@ export default new Router({
       component: ConfirmationScreen,
       props: route => ({ orderNumber: route.params.orderNumber }), // Pass orderNumber as prop
     },
-    {
-      path: '/admin-dash',
-      name: 'AdminDash',
-      component: AdminDash,
-    },
+
     {
       path: '/admin-menu',
       name: 'AdminMenu',
@@ -79,6 +95,7 @@ export default new Router({
       name: 'SalesDashboard',
       component: SalesDashboard,
     },
+
 
     /* Uncomment if needed in the future
     {
